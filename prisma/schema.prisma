@@ -1,0 +1,120 @@
+// This is your Prisma schema for RE FIT
+// Authentication & User Management with NextAuth.js
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // Hashed with bcrypt for credentials auth
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  
+  // RE FIT specific: user data
+  biometrics    Biometrics?
+  favorites     Favorite[]
+  weightEntries WeightEntry[]
+}
+
+// OAuth account model (for Google, GitHub, etc.)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+// Session model for session management
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Verification token for email verification
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// RE FIT: User biometrics data
+model Biometrics {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  gender         String   // "male" or "female"
+  age            Int
+  weight         Float    // in kg
+  height         Float    // in cm
+  activityLevel  String   // sedentary, lightly_active, etc.
+  isDiabetic     Boolean  @default(false)
+  allergies      String   // JSON string array of allergy types
+  preferences    String   // JSON string array of ingredient preferences
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// RE FIT: Favorite recipes
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String   // nama-makanan as unique identifier
+  name      String   // nama-makanan
+  kalori    Float
+  protein   Float
+  karbohidrat Float
+  lemak     Float
+  serat     Float
+  link      String
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, recipeId])
+}
+
+// RE FIT: Weight history entries
+model WeightEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  weight    Float    // in kg
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, date])
+}

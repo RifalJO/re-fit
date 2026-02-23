@@ -1,0 +1,237 @@
+"use client";
+
+import { useFormContext } from "react-hook-form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import type { ActivityLevel } from "@/types";
+import { ACTIVITY_LABELS } from "@/types";
+import { getIngredientPreferences } from "@/lib/ingredients";
+
+export function Step1Biometrics() {
+  const form = useFormContext();
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Your Biometrics</h3>
+        <p className="text-sm text-muted-foreground">
+          Let&apos;s start with your basic information to calculate your nutritional needs.
+        </p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FormField
+          control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Gender</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="age"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Age</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="25"
+                  {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="weight"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Weight (kg)</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="70"
+                  {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="height"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Height (cm)</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="170"
+                  {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function Step2Lifestyle() {
+  const form = useFormContext();
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Activity Level</h3>
+        <p className="text-sm text-muted-foreground">
+          How active is your daily lifestyle? This helps us calculate your calorie needs.
+        </p>
+      </div>
+
+      <FormField
+        control={form.control}
+        name="activityLevel"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Activity Level</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select activity level" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {(Object.keys(ACTIVITY_LABELS) as ActivityLevel[]).map((level) => (
+                  <SelectItem key={level} value={level}>
+                    {ACTIVITY_LABELS[level]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+}
+
+export function Step3Health() {
+  const form = useFormContext();
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Health Information</h3>
+        <p className="text-sm text-muted-foreground">
+          Tell us about any health conditions or allergies so we can recommend safe meals.
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        <FormField
+          control={form.control}
+          name="isDiabetic"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Diabetes</FormLabel>
+                <p className="text-sm text-muted-foreground">
+                  Do you have diabetes? We&apos;ll adjust recommendations accordingly.
+                </p>
+              </div>
+              <FormControl>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="allergies"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Allergies</FormLabel>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  { value: "telur", label: "Eggs" },
+                  { value: "susu", label: "Dairy" },
+                  { value: "kacang", label: "Nuts & Legumes" },
+                  { value: "udang", label: "Shrimp/Seafood" },
+                  { value: "ikan", label: "Fish" },
+                  { value: "gluten", label: "Gluten/Wheat" },
+                ].map((allergy) => (
+                  <FormItem
+                    key={allergy.value}
+                    className="flex flex-row items-center space-x-3 space-y-0"
+                  >
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value?.includes(allergy.value)}
+                        onCheckedChange={(checked) => {
+                          const current = field.value || [];
+                          if (checked) {
+                            field.onChange([...current, allergy.value]);
+                          } else {
+                            field.onChange(
+                              current.filter((a: string) => a !== allergy.value)
+                            );
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">{allergy.label}</FormLabel>
+                  </FormItem>
+                ))}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
+  );
+}

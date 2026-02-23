@@ -1,0 +1,117 @@
+export interface Recipe {
+  "nama-makanan": string;
+  kalori: number;
+  protein: number;
+  karbohidrat: number;
+  lemak: number;
+  serat: number;
+  link: string;
+}
+
+export type AllergyType = "telur" | "susu" | "kacang" | "udang" | "ikan" | "gluten";
+
+export type IngredientCategory =
+  | "ayam"
+  | "sapi"
+  | "kambing"
+  | "ikan"
+  | "udang"
+  | "cumi"
+  | "kerang"
+  | "telur"
+  | "tahu"
+  | "tempe"
+  | "soup"
+  | "goreng"
+  | "bakar"
+  | "tumis"
+  | "rebus"
+  | "mie"
+  | "nasi"
+  | "salad"
+  | "sate";
+
+export interface AllergyMap {
+  telur: string[];
+  susu: string[];
+  kacang: string[];
+  udang: string[];
+  ikan: string[];
+  gluten: string[];
+}
+
+export type Gender = "male" | "female";
+
+export type ActivityLevel =
+  | "sedentary"
+  | "lightly_active"
+  | "moderately_active"
+  | "very_active"
+  | "extra_active";
+
+export interface UserBiometrics {
+  gender: Gender;
+  age: number;
+  weight: number; // in kg
+  height: number; // in cm
+  activityLevel: ActivityLevel;
+}
+
+export interface HealthConstraints {
+  isDiabetic: boolean;
+  allergies: AllergyType[];
+}
+
+export interface FoodPreferences {
+  preferredIngredients: IngredientCategory[];
+}
+
+export interface CalculatedMetrics {
+  BMR: number;
+  TDEE: number;
+  calorieTarget: number;
+}
+
+export interface AppState {
+  // Form state
+  biometrics: UserBiometrics | null;
+  healthConstraints: HealthConstraints | null;
+  foodPreferences: FoodPreferences | null;
+
+  // Calculated metrics
+  metrics: CalculatedMetrics | null;
+
+  // Results
+  recommendations: Recipe[];
+
+  // Member features
+  favorites: Recipe[];
+  weightHistory: { date: string; weight: number }[];
+
+  // Actions
+  setBiometrics: (biometrics: UserBiometrics) => void;
+  setHealthConstraints: (constraints: HealthConstraints) => void;
+  setFoodPreferences: (preferences: FoodPreferences) => void;
+  setMetrics: (metrics: CalculatedMetrics) => void;
+  setRecommendations: (recipes: Recipe[]) => void;
+  addFavorite: (recipe: Recipe) => void;
+  removeFavorite: (recipeName: string) => void;
+  addWeightEntry: (weight: number, date?: string) => void;
+  resetState: () => void;
+}
+
+export const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
+  sedentary: 1.2,
+  lightly_active: 1.375,
+  moderately_active: 1.55,
+  very_active: 1.725,
+  extra_active: 1.9,
+};
+
+export const ACTIVITY_LABELS: Record<ActivityLevel, string> = {
+  sedentary: "Sedentary (little or no exercise)",
+  lightly_active: "Lightly Active (1-3 days/week)",
+  moderately_active: "Moderately Active (3-5 days/week)",
+  very_active: "Very Active (6-7 days/week)",
+  extra_active: "Extra Active (very hard exercise)",
+};

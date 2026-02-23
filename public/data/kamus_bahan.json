@@ -1,0 +1,20 @@
+{
+  "telur": [
+    "telur", "omelet", "omelette", "dadar", "orak arik", "ceplok", "fu yung hai", "martabak telur", "telur asin", "telur puyuh", "telur bebek", "rendang telur", "telur krispi", "telur gulung"
+  ],
+  "susu": [
+    "susu", "keju", "yogurt", "krim", "cream", "mac and cheese", "mayumi", "mayonnaise", "carbonara", "krim sup", "cheese", "milk"
+  ],
+  "kacang": [
+    "kacang", "peanut", "almond", "kacang tanah", "mede", "kacang panjang", "kacang hijau", "kacang merah", "melinjo", "jengkol"
+  ],
+  "udang": [
+    "udang", "ebi", "rebon", "popcorn udang", "tom yum goong", "spaghetti udang", "udang saus", "udang renyah", "udang bakar", "udang sayur", "serundeng udang", "talam udang"
+  ],
+  "ikan": [
+    "ikan", "tuna", "salmon", "teri", "bandeng", "kakap", "gurame", "patin", "mujair", "nila", "tongkol", "dori", "cakalang", "bawal", "sarden", "siomay ikan", "pempek", "pindang", "coan coan", "sate bandeng"
+  ],
+  "gluten": [
+    "roti", "tepung", "mie", "kwetiau", "bihun", "soun", "spaghetti", "makaroni", "lasagna", "fettucini", "pizza", "bakpao", "donat", "pangsit", "mantao", "bakmi", "ramen", "lumpia", "bakwan", "martabak", "crepes", "pastel", "sus", "brownies", "bolu", "kue", "cireng", "skotel", "risol", "sandwich", "burger"
+  ]
+}

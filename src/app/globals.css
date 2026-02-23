@@ -2,26 +2,161 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Gold accent utilities */
+  .text-gold {
+    color: hsl(45, 90%, 50%);
+  }
+  
+  .bg-gold {
+    background-color: hsl(45, 90%, 50%);
+  }
+  
+  .border-gold {
+    border-color: hsl(45, 90%, 50%);
+  }
+  
+  /* Forest green utilities */
+  .text-forest {
+    color: hsl(145, 65%, 25%);
+  }
+  
+  .bg-forest {
+    background-color: hsl(145, 65%, 25%);
+  }
+  
+  .border-forest {
+    border-color: hsl(145, 65%, 25%);
+  }
+  
+  /* Emerald utilities */
+  .text-emerald {
+    color: hsl(155, 55%, 35%);
+  }
+  
+  .bg-emerald {
+    background-color: hsl(155, 55%, 35%);
+  }
+  
+  /* Gradient backgrounds */
+  .bg-gradient-forest {
+    background: linear-gradient(135deg, hsl(145, 65%, 25%) 0%, hsl(155, 55%, 35%) 100%);
+  }
+  
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(45, 90%, 50%) 0%, hsl(35, 85%, 55%) 100%);
+  }
+  
+  /* Premium card effect */
+  .card-premium {
+    @apply border-2 border-primary/20 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-accent/50;
+  }
+  
+  /* Gold ring focus */
+  .focus-gold:focus {
+    @apply ring-2 ring-accent ring-offset-2;
+  }
+}
+
+@layer base {
+  :root {
+    /* Forest Green & Gold Theme */
+    --background: 150 20% 97%;
+    --foreground: 145 40% 12%;
+    --card: 150 25% 99%;
+    --card-foreground: 145 40% 12%;
+    --popover: 150 25% 99%;
+    --popover-foreground: 145 40% 12%;
+    
+    /* Primary: Forest Green - Deep, rich green for headers, navbar, main elements */
+    --primary: 145 65% 25%;
+    --primary-foreground: 0 0% 98%;
+    
+    /* Secondary: Emerald Green - Medium green for cards, secondary elements */
+    --secondary: 155 55% 35%;
+    --secondary-foreground: 0 0% 98%;
+    
+    /* Muted: Light green tint */
+    --muted: 150 15% 94%;
+    --muted-foreground: 145 20% 35%;
+    
+    /* Accent: Gold/Yellow - For highlights, buttons, active states */
+    --accent: 45 90% 50%;
+    --accent-foreground: 145 65% 15%;
+    
+    /* Destructive: Red for errors */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Borders and inputs with subtle green tint */
+    --border: 145 20% 85%;
+    --input: 145 20% 85%;
+    --ring: 45 90% 50%;
+    
+    /* Chart colors - Green and Gold palette */
+    --chart-1: 145 65% 35%;  /* Forest Green - Protein */
+    --chart-2: 155 55% 45%;  /* Emerald Green - Carbs */
+    --chart-3: 45 90% 50%;   /* Gold - Fat */
+    --chart-4: 150 40% 55%;  /* Sage Green */
+    --chart-5: 35 85% 55%;   /* Amber */
+    
+    --radius: 0.75rem;
+  }
+  
+  .dark {
+    /* Dark Forest Green & Gold Theme */
+    --background: 145 50% 8%;
+    --foreground: 150 20% 95%;
+    --card: 145 45% 10%;
+    --card-foreground: 150 20% 95%;
+    --popover: 145 45% 10%;
+    --popover-foreground: 150 20% 95%;
+    
+    /* Primary: Lighter forest green for dark mode */
+    --primary: 145 60% 40%;
+    --primary-foreground: 145 65% 12%;
+    
+    /* Secondary: Emerald green */
+    --secondary: 155 50% 30%;
+    --secondary-foreground: 0 0% 98%;
+    
+    /* Muted: Dark green */
+    --muted: 145 30% 15%;
+    --muted-foreground: 150 20% 65%;
+    
+    /* Accent: Gold for dark mode */
+    --accent: 45 85% 55%;
+    --accent-foreground: 145 65% 12%;
+    
+    /* Destructive */
+    --destructive: 0 62.8% 40.6%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Borders and inputs */
+    --border: 145 30% 20%;
+    --input: 145 30% 20%;
+    --ring: 45 85% 55%;
+    
+    /* Chart colors - Adjusted for dark mode */
+    --chart-1: 145 60% 50%;
+    --chart-2: 155 50% 55%;
+    --chart-3: 45 85% 55%;
+    --chart-4: 150 35% 60%;
+    --chart-5: 35 80% 60%;
+    
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
