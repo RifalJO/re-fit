@@ -114,7 +114,7 @@ export function extractIngredients(recipeName: string): string[] {
     ingredients.push(recipeName.toLowerCase());
   }
 
-  return [...new Set(ingredients)]; // Remove duplicates
+  return Array.from(new Set(ingredients)); // Remove duplicates
 }
 
 /**

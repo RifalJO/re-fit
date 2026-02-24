@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Shuffle, ArrowRightLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RecipeCard } from "@/components/recipes/recipe-card";
-import { useAppStore } from "@/lib/store";
 import { getAlternativeRecipes, getRandomRecipes } from "@/lib/recipe-utils";
+import { loadRecipes } from "@/lib/data";
 import type { Recipe } from "@/types";
 
 interface SwapItRecipeProps {
@@ -16,8 +16,12 @@ interface SwapItRecipeProps {
 export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
   const [alternatives, setAlternatives] = useState<Recipe[]>([]);
   const [showAlternatives, setShowAlternatives] = useState(false);
+  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
 
-  const { recipes: allRecipes } = useAppStore();
+  // Load recipes on mount
+  useEffect(() => {
+    loadRecipes().then(setAllRecipes);
+  }, []);
 
   const handleSwap = () => {
     if (allRecipes.length > 0) {
@@ -72,9 +76,20 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
 }
 
 export function RandomDiscoveryMenu() {
-  const { recipes: allRecipes } = useAppStore();
+  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [randomRecipes, setRandomRecipes] = useState<Recipe[]>([]);
   const [hasShuffled, setHasShuffled] = useState(false);
+
+  // Load recipes on mount
+  useEffect(() => {
+    loadRecipes().then((recipes) => {
+      setAllRecipes(recipes);
+      // Auto-load 3 random recipes
+      const random = getRandomRecipes(recipes, 3);
+      setRandomRecipes(random);
+      setHasShuffled(true);
+    });
+  }, []);
 
   const handleShuffle = () => {
     if (allRecipes.length > 0) {
@@ -83,13 +98,6 @@ export function RandomDiscoveryMenu() {
       setHasShuffled(true);
     }
   };
-
-  // Auto-load on mount
-  useState(() => {
-    if (allRecipes.length > 0 && randomRecipes.length === 0) {
-      handleShuffle();
-    }
-  });
 
   return (
     <Card>

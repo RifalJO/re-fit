@@ -33,7 +33,7 @@ export function MacroBalanceRadar() {
     const total = favorites.reduce(
       (acc, recipe) => ({
         protein: acc.protein + recipe.protein,
-        carbohydrates: acc.carbohydrates + recipe.carbohydrate,
+        carbohydrates: acc.carbohydrates + recipe.karbohidrat,
         fat: acc.fat + recipe.lemak,
       }),
       { protein: 0, carbohydrates: 0, fat: 0 }
