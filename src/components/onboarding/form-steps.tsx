@@ -21,16 +21,18 @@ import { Switch } from "@/components/ui/switch";
 import type { ActivityLevel } from "@/types";
 import { ACTIVITY_LABELS } from "@/types";
 import { getIngredientPreferences } from "@/lib/ingredients";
+import { useI18n } from "@/lib/i18n";
 
 export function Step1Biometrics() {
   const form = useFormContext();
+  const { t } = useI18n();
 
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Your Biometrics</h3>
+        <h3 className="text-lg font-semibold">{t.onboarding.biometrics}</h3>
         <p className="text-sm text-muted-foreground">
-          Let&apos;s start with your basic information to calculate your nutritional needs.
+          {t.onboarding.description}
         </p>
       </div>
 
@@ -40,16 +42,16 @@ export function Step1Biometrics() {
           name="gender"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Gender</FormLabel>
+              <FormLabel>{t.onboarding.gender}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select gender" />
+                    <SelectValue placeholder={t.onboarding.gender} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="male">{t.onboarding.male}</SelectItem>
+                  <SelectItem value="female">{t.onboarding.female}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -62,7 +64,7 @@ export function Step1Biometrics() {
           name="age"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Age</FormLabel>
+              <FormLabel>{t.onboarding.age}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -81,7 +83,7 @@ export function Step1Biometrics() {
           name="weight"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Weight (kg)</FormLabel>
+              <FormLabel>{t.onboarding.weight} (kg)</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -100,7 +102,7 @@ export function Step1Biometrics() {
           name="height"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Height (cm)</FormLabel>
+              <FormLabel>{t.onboarding.height} (cm)</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -120,13 +122,14 @@ export function Step1Biometrics() {
 
 export function Step2Lifestyle() {
   const form = useFormContext();
+  const { t } = useI18n();
 
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Activity Level</h3>
+        <h3 className="text-lg font-semibold">{t.onboarding.lifestyle}</h3>
         <p className="text-sm text-muted-foreground">
-          How active is your daily lifestyle? This helps us calculate your calorie needs.
+          {t.onboarding.activityLevel}
         </p>
       </div>
 
@@ -135,17 +138,17 @@ export function Step2Lifestyle() {
         name="activityLevel"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Activity Level</FormLabel>
+            <FormLabel>{t.onboarding.activityLevel}</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select activity level" />
+                  <SelectValue placeholder={t.onboarding.activityLevel} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
                 {(Object.keys(ACTIVITY_LABELS) as ActivityLevel[]).map((level) => (
                   <SelectItem key={level} value={level}>
-                    {ACTIVITY_LABELS[level]}
+                    {t.onboarding[level as keyof typeof t.onboarding] || ACTIVITY_LABELS[level]}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -160,13 +163,14 @@ export function Step2Lifestyle() {
 
 export function Step3Health() {
   const form = useFormContext();
+  const { t } = useI18n();
 
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Health Information</h3>
+        <h3 className="text-lg font-semibold">{t.onboarding.health}</h3>
         <p className="text-sm text-muted-foreground">
-          Tell us about any health conditions or allergies so we can recommend safe meals.
+          {t.onboarding.allergiesDescription}
         </p>
       </div>
 
@@ -177,9 +181,9 @@ export function Step3Health() {
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Diabetes</FormLabel>
+                <FormLabel className="text-base">{t.onboarding.isDiabetic}</FormLabel>
                 <p className="text-sm text-muted-foreground">
-                  Do you have diabetes? We&apos;ll adjust recommendations accordingly.
+                  {t.onboarding.isDiabetic}
                 </p>
               </div>
               <FormControl>
@@ -194,15 +198,15 @@ export function Step3Health() {
           name="allergies"
           render={() => (
             <FormItem>
-              <FormLabel>Allergies</FormLabel>
+              <FormLabel>{t.onboarding.allergies}</FormLabel>
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
-                  { value: "telur", label: "Eggs" },
-                  { value: "susu", label: "Dairy" },
-                  { value: "kacang", label: "Nuts & Legumes" },
-                  { value: "udang", label: "Shrimp/Seafood" },
-                  { value: "ikan", label: "Fish" },
-                  { value: "gluten", label: "Gluten/Wheat" },
+                  { value: "telur", label: "Telur" },
+                  { value: "susu", label: "Susu" },
+                  { value: "kacang", label: "Kacang-kacangan" },
+                  { value: "udang", label: "Udang/Seafood" },
+                  { value: "ikan", label: "Ikan" },
+                  { value: "gluten", label: "Gluten/Gandum" },
                 ].map((allergy) => (
                   <FormField
                     key={allergy.value}
@@ -244,6 +248,7 @@ export function Step3Health() {
 
 export function Step4FoodPreferences() {
   const form = useFormContext();
+  const { t } = useI18n();
   const ingredientPreferences = getIngredientPreferences();
 
   // Group ingredients by category
@@ -259,9 +264,9 @@ export function Step4FoodPreferences() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Food Preferences</h3>
+        <h3 className="text-lg font-semibold">{t.onboarding.foodPreferences}</h3>
         <p className="text-sm text-muted-foreground">
-          Select your preferred ingredients and dish types. We&apos;ll recommend recipes that match your preferences.
+          {t.onboarding.preferredIngredientsDescription}
         </p>
       </div>
 
@@ -269,7 +274,7 @@ export function Step4FoodPreferences() {
         {/* Protein Sources */}
         <div className="space-y-3">
           <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            Protein Sources
+            Sumber Protein
           </label>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {proteinSources.map((ingredient) => (
@@ -305,7 +310,7 @@ export function Step4FoodPreferences() {
         {/* Dish Types */}
         <div className="space-y-3">
           <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            Dish Types
+            Jenis Masakan
           </label>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {dishTypes.map((dish) => (
@@ -341,7 +346,7 @@ export function Step4FoodPreferences() {
         {/* Info note */}
         <div className="rounded-lg bg-primary/10 p-4 text-sm text-primary">
           <p>
-            💡 Tip: Select multiple options to get diverse recommendations. Leave empty for all options.
+            💡 Tip: Pilih beberapa opsi untuk mendapatkan rekomendasi yang beragam. Kosongkan untuk semua opsi.
           </p>
         </div>
       </div>

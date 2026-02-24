@@ -11,9 +11,11 @@ import { onboardingSchema, type OnboardingFormData } from "./form-schema";
 import { Step1Biometrics, Step2Lifestyle, Step3Health, Step4FoodPreferences } from "./form-steps";
 import type { UserBiometrics, HealthConstraints, CalculatedMetrics, FoodPreferences } from "@/types";
 import { ACTIVITY_MULTIPLIERS } from "@/types";
+import { useI18n } from "@/lib/i18n";
 
 export function OnboardingForm() {
   const router = useRouter();
+  const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
   const setBiometrics = useAppStore((state) => state.setBiometrics);
   const setHealthConstraints = useAppStore((state) => state.setHealthConstraints);
@@ -35,10 +37,10 @@ export function OnboardingForm() {
   });
 
   const steps = [
-    { title: "Biometrics", component: Step1Biometrics },
-    { title: "Lifestyle", component: Step2Lifestyle },
-    { title: "Health", component: Step3Health },
-    { title: "Food Preferences", component: Step4FoodPreferences },
+    { title: t.onboarding.biometrics, component: Step1Biometrics },
+    { title: t.onboarding.lifestyle, component: Step2Lifestyle },
+    { title: t.onboarding.health, component: Step3Health },
+    { title: t.onboarding.foodPreferences, component: Step4FoodPreferences },
   ];
 
   const progress = ((currentStep + 1) / steps.length) * 100;
@@ -146,10 +148,10 @@ export function OnboardingForm() {
         <div className="space-y-4 animate-slide-up">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold transition-all duration-300">
-              Step {currentStep + 1}: {steps[currentStep].title}
+              {t.onboarding.step} {currentStep + 1}: {steps[currentStep].title}
             </h2>
             <span className="text-sm text-muted-foreground">
-              {currentStep + 1} of {steps.length}
+              {currentStep + 1} {t.onboarding.of} {steps.length}
             </span>
           </div>
           <Progress value={progress} className="h-2 transition-all duration-500" />
@@ -167,16 +169,16 @@ export function OnboardingForm() {
             disabled={currentStep === 0}
             className="transition-all duration-300 hover:scale-105"
           >
-            Previous
+            {t.onboarding.previous}
           </Button>
 
           {currentStep === steps.length - 1 ? (
             <Button type="submit" className="transition-all duration-300 hover:scale-105">
-              Get Recommendations
+              {t.onboarding.getRecommendations}
             </Button>
           ) : (
             <Button type="button" onClick={nextStep} className="transition-all duration-300 hover:scale-105">
-              Next
+              {t.onboarding.next}
             </Button>
           )}
         </div>
