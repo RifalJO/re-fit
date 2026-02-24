@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Image from "next/image";
-import { TrendingUp, Activity, Utensils, LogOut } from "lucide-react";
+import { Heart, TrendingUp, Activity, Utensils, LogOut } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
