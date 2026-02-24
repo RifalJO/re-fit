@@ -48,7 +48,7 @@ export function IntermittentFastingTracker() {
       setTimeRemaining(`${hours}h ${minutes}m ${seconds}s`);
 
       // Calculate progress
-      const total = fasting.endTime - fasting.startTime!;
+      const total = fasting.endTime! - fasting.startTime!;
       const elapsed = now - fasting.startTime!;
       setProgress((elapsed / total) * 100);
     }, 1000);
