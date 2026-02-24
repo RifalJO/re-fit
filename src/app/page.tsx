@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default function HomePage() {
   const { t } = useI18n();
@@ -18,14 +19,15 @@ export default function HomePage() {
           <Link href="/" className="flex items-center space-x-3 transition-transform duration-300 hover:scale-105">
             <Image src="/logo.png" alt="RE FIT Logo" width={200} height={70} className="h-16 w-auto object-contain" />
           </Link>
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link href="#features" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+          <nav className="flex items-center space-x-4">
+            <Link href="#features" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden md:block">
               {t.home.features}
             </Link>
-            <Link href="#how-it-works" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+            <Link href="#how-it-works" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden md:block">
               {t.home.howItWorks}
             </Link>
-            <Button asChild className="transition-all duration-300 hover:scale-105">
+            <LanguageSwitcher />
+            <Button asChild className="transition-all duration-300 hover:scale-105 hidden sm:inline-flex">
               <Link href="/onboarding">{t.home.getStarted}</Link>
             </Button>
           </nav>
