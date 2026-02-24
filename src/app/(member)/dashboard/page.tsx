@@ -20,6 +20,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RecipeGrid } from "@/components/recipes";
 import { useAppStore } from "@/lib/store";
 import { formatNumber } from "@/lib/utils";
+import {
+  IntermittentFastingTracker,
+  HydrationTracker,
+  MacroBalanceRadar,
+  SwapItRecipe,
+  RandomDiscoveryMenu,
+  GroceryList,
+} from "@/components/dashboard";
 import type { Recipe } from "@/types";
 
 interface DbWeightEntry {
@@ -214,8 +222,8 @@ export default function DashboardPage() {
       <main className="flex-1 container mx-auto px-4 py-8 space-y-8">
         {/* Metrics Overview */}
         {metrics && (
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card>
+          <div className="grid gap-4 md:grid-cols-3 animate-fade-in">
+            <Card className="card-hover">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Basal Metabolic Rate
@@ -230,7 +238,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Total Daily Energy Expenditure
@@ -245,7 +253,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Daily Calorie Target
@@ -261,6 +269,41 @@ export default function DashboardPage() {
             </Card>
           </div>
         )}
+
+        {/* Bento Grid - New Features */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Intermittent Fasting - Large tile */}
+          <div className="md:col-span-1 animate-scale-in">
+            <IntermittentFastingTracker />
+          </div>
+
+          {/* Hydration Tracker - Large tile */}
+          <div className="md:col-span-1 animate-scale-in" style={{ animationDelay: '0.1s' }}>
+            <HydrationTracker />
+          </div>
+
+          {/* Macro Balance Radar - Full width */}
+          <div className="md:col-span-2 lg:col-span-2 animate-scale-in" style={{ animationDelay: '0.2s' }}>
+            <MacroBalanceRadar />
+          </div>
+
+          {/* Random Discovery */}
+          <div className="animate-scale-in" style={{ animationDelay: '0.3s' }}>
+            <RandomDiscoveryMenu />
+          </div>
+
+          {/* Swap-It Recipe - Only show if has favorites */}
+          {favorites.length > 0 && (
+            <div className="md:col-span-1 animate-scale-in" style={{ animationDelay: '0.4s' }}>
+              <SwapItRecipe recipe={favorites[0]} />
+            </div>
+          )}
+
+          {/* Grocery List - Full width */}
+          <div className="md:col-span-2 lg:col-span-3 animate-scale-in" style={{ animationDelay: '0.5s' }}>
+            <GroceryList />
+          </div>
+        </div>
 
         {/* Weight History Chart */}
         <Card>
