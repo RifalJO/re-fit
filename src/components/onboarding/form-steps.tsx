@@ -148,7 +148,7 @@ export function Step2Lifestyle() {
               <SelectContent>
                 {(Object.keys(ACTIVITY_LABELS) as ActivityLevel[]).map((level) => (
                   <SelectItem key={level} value={level}>
-                    {t.onboarding[level as keyof typeof t.onboarding] || ACTIVITY_LABELS[level]}
+                    {ACTIVITY_LABELS[level]}
                   </SelectItem>
                 ))}
               </SelectContent>

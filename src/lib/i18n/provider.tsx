@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { Locale, translations, detectLocale, getTranslation } from "./translations";
+import { Locale, translations, getTranslation } from "./translations";
 
 type I18nContextType = {
   locale: Locale;
@@ -12,13 +12,22 @@ type I18nContextType = {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
+  // Default to Indonesian ('id')
   const [locale, setLocaleState] = useState<Locale>('id');
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Detect locale from browser on mount
-    const detectedLocale = detectLocale(typeof navigator !== 'undefined' ? navigator.language : null);
-    setLocaleState(detectedLocale);
+    // Detect locale from browser on mount, but default to 'id'
+    // Only use detected locale if it's explicitly Indonesian
+    if (typeof navigator !== 'undefined') {
+      const browserLang = navigator.language.toLowerCase();
+      if (browserLang.startsWith('id')) {
+        setLocaleState('id');
+      } else {
+        // Default to Indonesian for all users
+        setLocaleState('id');
+      }
+    }
     setIsLoaded(true);
   }, []);
 

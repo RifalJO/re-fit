@@ -109,9 +109,9 @@ export const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
 };
 
 export const ACTIVITY_LABELS: Record<ActivityLevel, string> = {
-  sedentary: "Sedentary (little or no exercise)",
-  lightly_active: "Lightly Active (1-3 days/week)",
-  moderately_active: "Moderately Active (3-5 days/week)",
-  very_active: "Very Active (6-7 days/week)",
-  extra_active: "Extra Active (very hard exercise)",
+  sedentary: "Sedenter (jarang olahraga)",
+  lightly_active: "Ringan (olahraga 1-3 hari/minggu)",
+  moderately_active: "Sedang (olahraga 3-5 hari/minggu)",
+  very_active: "Berat (olahraga 6-7 hari/minggu)",
+  extra_active: "Ekstra (olahraga 2x sehari)",
 };
