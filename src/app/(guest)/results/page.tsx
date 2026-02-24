@@ -118,21 +118,19 @@ export default function ResultsPage() {
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/onboarding">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Link>
-            </Button>
-
-            <Link href="/">
-              <Image src="/logo.png" alt="RE FIT Logo" width={180} height={60} className="h-14 w-auto" />
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/onboarding">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back
             </Link>
+          </Button>
 
-            <div className="w-20" /> {/* Spacer for centering */}
-          </div>
+          <Link href="/" className="flex items-center space-x-3">
+            <Image src="/logo.png" alt="RE FIT Logo" width={200} height={70} className="h-16 w-auto object-contain" />
+          </Link>
+
+          <div className="w-24" /> {/* Spacer for centering */}
         </div>
       </header>
 

@@ -7,9 +7,9 @@ export default function OnboardingPage() {
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.png" alt="RE FIT Logo" width={180} height={60} className="h-14 w-auto" />
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Link href="/" className="flex items-center space-x-3">
+            <Image src="/logo.png" alt="RE FIT Logo" width={200} height={70} className="h-16 w-auto object-contain" />
           </Link>
         </div>
       </header>
