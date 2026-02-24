@@ -16,17 +16,18 @@ import type { Recipe } from "@/types";
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const hasBiometrics = useAppStore((state) => !!state.biometrics);
 
-  // Redirect to dashboard if user is authenticated and has completed onboarding
+  // Redirect to dashboard ONLY if user is authenticated (logged in)
+  // Do NOT redirect guest users who just completed onboarding
   useEffect(() => {
-    if (session && hasBiometrics) {
-      // User is logged in and has completed onboarding, redirect to dashboard
+    // Only redirect if session is confirmed authenticated
+    if (status === "authenticated" && hasBiometrics) {
       router.push("/dashboard");
     }
-  }, [session, hasBiometrics, router]);
+  }, [status, hasBiometrics, router]);
 
   const {
     metrics,
