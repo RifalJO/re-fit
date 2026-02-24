@@ -320,7 +320,7 @@ export function getUserLocale(): Locale {
     return 'id';
   }
   
-  const browserLanguage = navigator.language || navigator.userLanguage;
+  const browserLanguage = navigator.language;
   return detectLocale(browserLanguage);
 }
 
