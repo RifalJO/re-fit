@@ -29,6 +29,7 @@ model User {
   biometrics    Biometrics?
   favorites     Favorite[]
   weightEntries WeightEntry[]
+  recommendations Recommendation[]
 }
 
 // OAuth account model (for Google, GitHub, etc.)
@@ -113,8 +114,28 @@ model WeightEntry {
   weight    Float    // in kg
   date      DateTime @default(now())
   createdAt DateTime @default(now())
-  
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId, date])
+}
+
+// RE FIT: Recommended recipes for users
+model Recommendation {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String   // nama-makanan as unique identifier
+  name      String   // nama-makanan
+  kalori    Float
+  protein   Float
+  karbohidrat Float
+  lemak     Float
+  serat     Float
+  link      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
+  @@index([userId])
 }

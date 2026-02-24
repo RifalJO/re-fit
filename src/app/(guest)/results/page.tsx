@@ -14,6 +14,7 @@ import type { Recipe } from "@/types";
 
 export default function ResultsPage() {
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const {
     metrics,
@@ -62,6 +63,12 @@ export default function ResultsPage() {
           );
 
           setRecommendations(recommended);
+
+          // Save recommendations to database if user is authenticated
+          await saveRecommendationsToDb(recommended);
+        } else if (recommendations.length > 0) {
+          // If recommendations already exist, still save them to DB
+          await saveRecommendationsToDb(recommendations);
         }
 
         setLoading(false);
@@ -74,6 +81,41 @@ export default function ResultsPage() {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metrics, healthConstraints, recommendations.length, setRecommendations, foodPreferences?.preferredIngredients]);
+
+  async function saveRecommendationsToDb(recipes: Recipe[]) {
+    if (saving) return; // Prevent duplicate saves
+    setSaving(true);
+
+    try {
+      const response = await fetch("/api/user/recommendations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipes: recipes.map((recipe) => ({
+            recipeId: recipe["nama-makanan"],
+            name: recipe["nama-makanan"],
+            kalori: recipe.kalori,
+            protein: recipe.protein,
+            karbohidrat: recipe.karbohidrat,
+            lemak: recipe.lemak,
+            serat: recipe.serat,
+            link: recipe.link,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to save recommendations:", errorData);
+      } else {
+        console.log("Recommendations saved to database");
+      }
+    } catch (error) {
+      console.error("Error saving recommendations:", error);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   const handleToggleFavorite = (recipe: Recipe) => {
     const isFavorite = favorites.some(

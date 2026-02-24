@@ -47,6 +47,17 @@ interface DbBiometrics {
   preferences: string;
 }
 
+interface DbRecommendation {
+  recipeId: string;
+  name: string;
+  kalori: number;
+  protein: number;
+  karbohidrat: number;
+  lemak: number;
+  serat: number;
+  link: string;
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -57,11 +68,13 @@ export default function DashboardPage() {
     metrics,
     favorites,
     weightHistory,
+    recommendations,
     setBiometrics,
     setMetrics,
     removeFavorite,
     addFavorite,
     addWeightEntry,
+    setRecommendations,
   } = useAppStore();
 
   // Load user data from database on mount
@@ -126,7 +139,7 @@ export default function DashboardPage() {
       // Load weight history
       const weightRes = await fetch("/api/user/weight");
       const weightData = await weightRes.json();
-      
+
       if (weightData.weightEntries) {
         const dbWeights = weightData.weightEntries as DbWeightEntry[];
         // Load into store
@@ -140,6 +153,25 @@ export default function DashboardPage() {
           }
         });
       }
+
+      // Load recommendations
+      const recRes = await fetch("/api/user/recommendations");
+      const recData = await recRes.json();
+
+      if (recData.recommendations && recData.recommendations.length > 0) {
+        const dbRecs = recData.recommendations as DbRecommendation[];
+        // Convert to Recipe format
+        const recipeRecs = dbRecs.map((rec) => ({
+          "nama-makanan": rec.name,
+          kalori: rec.kalori,
+          protein: rec.protein,
+          karbohidrat: rec.karbohidrat,
+          lemak: rec.lemak,
+          serat: rec.serat,
+          link: rec.link,
+        }));
+        setRecommendations(recipeRecs);
+      }
     } catch (error) {
       console.error("Error loading user data:", error);
     } finally {
@@ -148,6 +180,35 @@ export default function DashboardPage() {
   }
 
   const handleToggleFavorite = async (recipe: Recipe) => {
+    const isFavorite = favorites.some(
+      (f) => f["nama-makanan"] === recipe["nama-makanan"]
+    );
+
+    if (isFavorite) {
+      removeFavorite(recipe["nama-makanan"]);
+      await fetch(`/api/user/favorites?recipeId=${recipe["nama-makanan"]}`, {
+        method: "DELETE",
+      });
+    } else {
+      addFavorite(recipe);
+      await fetch("/api/user/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipeId: recipe["nama-makanan"],
+          name: recipe["nama-makanan"],
+          kalori: recipe.kalori,
+          protein: recipe.protein,
+          karbohidrat: recipe.karbohidrat,
+          lemak: recipe.lemak,
+          serat: recipe.serat,
+          link: recipe.link,
+        }),
+      });
+    }
+  };
+
+  const handleToggleRecommendationFavorite = async (recipe: Recipe) => {
     const isFavorite = favorites.some(
       (f) => f["nama-makanan"] === recipe["nama-makanan"]
     );
@@ -340,6 +401,41 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Recommended Recipes */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Recommended For You</h2>
+            {recommendations.length > 0 && (
+              <span className="text-sm text-muted-foreground">
+                {recommendations.length} recipes
+              </span>
+            )}
+          </div>
+
+          {recommendations.length > 0 ? (
+            <RecipeGrid
+              recipes={recommendations}
+              favorites={favorites}
+              onToggleFavorite={handleToggleRecommendationFavorite}
+            />
+          ) : (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center py-8 text-muted-foreground">
+                  <Utensils className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                  <p>No recommendations yet</p>
+                  <p className="text-sm">
+                    Complete the onboarding to get personalized recipe recommendations
+                  </p>
+                  <Button asChild className="mt-4">
+                    <Link href="/onboarding">Start Onboarding</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
 
         {/* Favorite Recipes */}
         <div className="space-y-4">
