@@ -128,7 +128,7 @@ export default function ResultsPage() {
             </Button>
 
             <Link href="/">
-              <Image src="/logo.png" alt="RE FIT Logo" width={120} height={40} className="h-10 w-auto" />
+              <Image src="/logo.png" alt="RE FIT Logo" width={180} height={60} className="h-14 w-auto" />
             </Link>
 
             <div className="w-20" /> {/* Spacer for centering */}
