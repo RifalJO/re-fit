@@ -14,7 +14,6 @@ import type { Recipe } from "@/types";
 
 export default function ResultsPage() {
   const [loading, setLoading] = useState(true);
-  const hasBiometrics = useAppStore((state) => !!state.biometrics);
 
   const {
     metrics,
