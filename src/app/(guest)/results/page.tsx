@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +15,17 @@ import { filterRecipesByIngredients } from "@/lib/ingredients";
 import type { Recipe } from "@/types";
 
 export default function ResultsPage() {
+  const router = useRouter();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
+
+  // Redirect to dashboard if user is authenticated and has biometrics
+  useEffect(() => {
+    if (session) {
+      // User is logged in, redirect to dashboard
+      router.push("/dashboard");
+    }
+  }, [session, router]);
 
   const {
     metrics,
