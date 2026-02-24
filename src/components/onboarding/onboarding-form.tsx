@@ -141,40 +141,41 @@ export function OnboardingForm() {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="w-full max-w-2xl space-y-8"
+        className="w-full max-w-2xl space-y-8 animate-fade-in"
       >
-        <div className="space-y-4">
+        <div className="space-y-4 animate-slide-up">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-2xl font-bold transition-all duration-300">
               Step {currentStep + 1}: {steps[currentStep].title}
             </h2>
             <span className="text-sm text-muted-foreground">
               {currentStep + 1} of {steps.length}
             </span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-2 transition-all duration-500" />
         </div>
 
-        <div className="rounded-lg border bg-card p-6">
+        <div className="rounded-lg border bg-card p-6 animate-scale-in shadow-md">
           <CurrentStepComponent />
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between animate-fade-in">
           <Button
             type="button"
             variant="outline"
             onClick={prevStep}
             disabled={currentStep === 0}
+            className="transition-all duration-300 hover:scale-105"
           >
             Previous
           </Button>
 
           {currentStep === steps.length - 1 ? (
-            <Button type="submit">
+            <Button type="submit" className="transition-all duration-300 hover:scale-105">
               Get Recommendations
             </Button>
           ) : (
-            <Button type="button" onClick={nextStep}>
+            <Button type="button" onClick={nextStep} className="transition-all duration-300 hover:scale-105">
               Next
             </Button>
           )}
