@@ -9,9 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useI18n } from "@/lib/i18n";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -32,7 +34,7 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError(result.error);
+        setError(t.auth.invalidCredentials);
         setIsLoading(false);
         return;
       }
@@ -40,17 +42,17 @@ export default function LoginPage() {
       router.push("/dashboard");
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t.auth.somethingWentWrong);
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col animate-fade-in">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-3 flex items-center justify-center">
-          <Link href="/" className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center space-x-3 transition-transform duration-300 hover:scale-105">
             <Image src="/logo.png" alt="RE FIT Logo" width={200} height={70} className="h-16 w-auto object-contain" />
           </Link>
         </div>
@@ -58,11 +60,11 @@ export default function LoginPage() {
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md animate-scale-in shadow-lg">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t.auth.login}</CardTitle>
             <CardDescription>
-              Sign in to your RE FIT account to access your dashboard
+              {t.auth.signIn} to your RE FIT account to access your dashboard
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
@@ -73,7 +75,7 @@ export default function LoginPage() {
                 </div>
               )}
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t.auth.email}</Label>
                 <Input
                   id="email"
                   name="email"
@@ -83,7 +85,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t.auth.password}</Label>
                 <Input
                   id="password"
                   name="password"
@@ -106,13 +108,13 @@ export default function LoginPage() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign In"}
+              <Button type="submit" className="w-full transition-all duration-300 hover:scale-105" disabled={isLoading}>
+                {isLoading ? t.common.loading : t.auth.signIn}
               </Button>
               <p className="text-sm text-center text-muted-foreground">
-                Don&apos;t have an account?{" "}
+                {t.auth.dontHaveAccount}{" "}
                 <Link href="/signup" className="text-primary hover:underline">
-                  Sign up
+                  {t.auth.signUp}
                 </Link>
               </p>
             </CardFooter>
@@ -124,7 +126,7 @@ export default function LoginPage() {
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 flex flex-col items-center space-y-4">
           <Image src="/logo.png" alt="RE FIT Logo" width={100} height={35} className="h-8 w-auto opacity-80" />
-          <p className="text-sm text-muted-foreground">&copy; 2026 RE FIT. Personalized Nutrition Platform.</p>
+          <p className="text-sm text-muted-foreground">&copy; 2026 RE FIT. {t.home.footerText}</p>
         </div>
       </footer>
     </div>
