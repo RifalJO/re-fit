@@ -64,7 +64,7 @@ export function HydrationTracker() {
     animate: { 
       pathLength: 1, 
       opacity: 0.3,
-      transition: { duration: 2, ease: "easeInOut" }
+      transition: { duration: 2, ease: "easeInOut" as const }
     },
   };
 
