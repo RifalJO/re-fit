@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,19 +13,8 @@ import { filterRecipesByIngredients } from "@/lib/ingredients";
 import type { Recipe } from "@/types";
 
 export default function ResultsPage() {
-  const router = useRouter();
-  const { status } = useSession();
   const [loading, setLoading] = useState(true);
   const hasBiometrics = useAppStore((state) => !!state.biometrics);
-
-  // Redirect to dashboard ONLY if user is authenticated (logged in)
-  // Do NOT redirect guest users who just completed onboarding
-  useEffect(() => {
-    // Only redirect if session is confirmed authenticated
-    if (status === "authenticated" && hasBiometrics) {
-      router.push("/dashboard");
-    }
-  }, [status, hasBiometrics, router]);
 
   const {
     metrics,
