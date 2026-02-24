@@ -38,10 +38,6 @@ export default function HomePage() {
       <main className="flex-1">
         <section className="container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-3xl mx-auto text-center space-y-8 animate-slide-up">
-            <div className="inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-medium animate-scale-in shadow-sm">
-              🎯 {t.home.personalizedNutrition}
-            </div>
-
             <div className="space-y-4">
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight transition-all duration-300">
                 {t.home.yourPathToBetterHealth}{" "}
