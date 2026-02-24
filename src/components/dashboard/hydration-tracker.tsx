@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Minus, Droplets } from "lucide-react";
+import { Plus, Minus, Droplets, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useAppStore } from "@/lib/store";
-import { cn } from "@/lib/utils";
 
 interface HydrationState {
   current: number; // ml

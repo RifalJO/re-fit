@@ -125,7 +125,7 @@ export function RandomDiscoveryMenu() {
 
         {randomRecipes.length === 0 && (
           <p className="text-sm text-muted-foreground text-center py-4">
-            Click "Surprise Me" to discover new recipes!
+            Click &quot;Surprise Me&quot; to discover new recipes!
           </p>
         )}
       </CardContent>

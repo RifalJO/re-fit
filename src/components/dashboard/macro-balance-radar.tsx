@@ -13,7 +13,6 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppStore } from "@/lib/store";
-import type { Recipe } from "@/types";
 
 interface MacroData {
   subject: string;
