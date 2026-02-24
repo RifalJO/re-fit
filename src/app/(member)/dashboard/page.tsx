@@ -271,36 +271,32 @@ export default function DashboardPage() {
         )}
 
         {/* Bento Grid - New Features */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Intermittent Fasting - Large tile */}
-          <div className="md:col-span-1 animate-scale-in">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Row 1: IF Tracker & Hydration */}
+          <div className="lg:col-span-2 animate-scale-in">
             <IntermittentFastingTracker />
           </div>
-
-          {/* Hydration Tracker - Large tile */}
-          <div className="md:col-span-1 animate-scale-in" style={{ animationDelay: '0.1s' }}>
+          <div className="lg:col-span-2 animate-scale-in" style={{ animationDelay: '0.1s' }}>
             <HydrationTracker />
           </div>
 
-          {/* Macro Balance Radar - Full width */}
-          <div className="md:col-span-2 lg:col-span-2 animate-scale-in" style={{ animationDelay: '0.2s' }}>
+          {/* Row 2: Macro Balance - Full width */}
+          <div className="lg:col-span-4 animate-scale-in" style={{ animationDelay: '0.2s' }}>
             <MacroBalanceRadar />
           </div>
 
-          {/* Random Discovery */}
-          <div className="animate-scale-in" style={{ animationDelay: '0.3s' }}>
+          {/* Row 3: Random Discovery & Swap-It */}
+          <div className="lg:col-span-2 animate-scale-in" style={{ animationDelay: '0.3s' }}>
             <RandomDiscoveryMenu />
           </div>
-
-          {/* Swap-It Recipe - Only show if has favorites */}
           {favorites.length > 0 && (
-            <div className="md:col-span-1 animate-scale-in" style={{ animationDelay: '0.4s' }}>
+            <div className="lg:col-span-2 animate-scale-in" style={{ animationDelay: '0.4s' }}>
               <SwapItRecipe recipe={favorites[0]} />
             </div>
           )}
 
-          {/* Grocery List - Full width */}
-          <div className="md:col-span-2 lg:col-span-3 animate-scale-in" style={{ animationDelay: '0.5s' }}>
+          {/* Row 4: Grocery List - Full width */}
+          <div className="lg:col-span-4 animate-scale-in" style={{ animationDelay: '0.5s' }}>
             <GroceryList />
           </div>
         </div>

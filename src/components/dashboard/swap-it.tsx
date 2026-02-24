@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RecipeCard } from "@/components/recipes/recipe-card";
 import { getAlternativeRecipes, getRandomRecipes } from "@/lib/recipe-utils";
 import { loadRecipes } from "@/lib/data";
+import { useAppStore } from "@/lib/store";
 import type { Recipe } from "@/types";
 
 interface SwapItRecipeProps {
@@ -17,6 +18,7 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
   const [alternatives, setAlternatives] = useState<Recipe[]>([]);
   const [showAlternatives, setShowAlternatives] = useState(false);
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
+  const { addFavorite, removeFavorite, favorites } = useAppStore();
 
   // Load recipes on mount
   useEffect(() => {
@@ -28,6 +30,35 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
       const alts = getAlternativeRecipes(recipe, allRecipes);
       setAlternatives(alts);
       setShowAlternatives(true);
+    }
+  };
+
+  const handleToggleFavorite = async (recipeToToggle: Recipe) => {
+    const isFavorite = favorites.some(
+      (f) => f["nama-makanan"] === recipeToToggle["nama-makanan"]
+    );
+
+    if (isFavorite) {
+      removeFavorite(recipeToToggle["nama-makanan"]);
+      await fetch(`/api/user/favorites?recipeId=${recipeToToggle["nama-makanan"]}`, {
+        method: "DELETE",
+      });
+    } else {
+      addFavorite(recipeToToggle);
+      await fetch("/api/user/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipeId: recipeToToggle["nama-makanan"],
+          name: recipeToToggle["nama-makanan"],
+          kalori: recipeToToggle.kalori,
+          protein: recipeToToggle.protein,
+          karbohidrat: recipeToToggle.karbohidrat,
+          lemak: recipeToToggle.lemak,
+          serat: recipeToToggle.serat,
+          link: recipeToToggle.link,
+        }),
+      });
     }
   };
 
@@ -44,7 +75,12 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
           <p className="text-sm text-muted-foreground mb-2">
             Current Recipe:
           </p>
-          <RecipeCard recipe={recipe} showChart={false} />
+          <RecipeCard 
+            recipe={recipe} 
+            showChart={false}
+            isFavorite={favorites.some((f) => f["nama-makanan"] === recipe["nama-makanan"])}
+            onToggleFavorite={handleToggleFavorite}
+          />
         </div>
 
         <Button
@@ -61,7 +97,12 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
             <div className="grid gap-4">
               {alternatives.map((alt, index) => (
                 <div key={index} className="animate-fade-in">
-                  <RecipeCard recipe={alt} showChart={false} />
+                  <RecipeCard 
+                    recipe={alt} 
+                    showChart={false}
+                    isFavorite={favorites.some((f) => f["nama-makanan"] === alt["nama-makanan"])}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
                 </div>
               ))}
             </div>
@@ -79,6 +120,7 @@ export function RandomDiscoveryMenu() {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [randomRecipes, setRandomRecipes] = useState<Recipe[]>([]);
   const [hasShuffled, setHasShuffled] = useState(false);
+  const { addFavorite, removeFavorite, favorites } = useAppStore();
 
   // Load recipes on mount
   useEffect(() => {
@@ -96,6 +138,35 @@ export function RandomDiscoveryMenu() {
       const random = getRandomRecipes(allRecipes, 3);
       setRandomRecipes(random);
       setHasShuffled(true);
+    }
+  };
+
+  const handleToggleFavorite = async (recipeToToggle: Recipe) => {
+    const isFavorite = favorites.some(
+      (f) => f["nama-makanan"] === recipeToToggle["nama-makanan"]
+    );
+
+    if (isFavorite) {
+      removeFavorite(recipeToToggle["nama-makanan"]);
+      await fetch(`/api/user/favorites?recipeId=${recipeToToggle["nama-makanan"]}`, {
+        method: "DELETE",
+      });
+    } else {
+      addFavorite(recipeToToggle);
+      await fetch("/api/user/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipeId: recipeToToggle["nama-makanan"],
+          name: recipeToToggle["nama-makanan"],
+          kalori: recipeToToggle.kalori,
+          protein: recipeToToggle.protein,
+          karbohidrat: recipeToToggle.karbohidrat,
+          lemak: recipeToToggle.lemak,
+          serat: recipeToToggle.serat,
+          link: recipeToToggle.link,
+        }),
+      });
     }
   };
 
@@ -125,7 +196,12 @@ export function RandomDiscoveryMenu() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <RecipeCard recipe={recipe} showChart={false} />
+                <RecipeCard 
+                  recipe={recipe} 
+                  showChart={false}
+                  isFavorite={favorites.some((f) => f["nama-makanan"] === recipe["nama-makanan"])}
+                  onToggleFavorite={handleToggleFavorite}
+                />
               </motion.div>
             ))}
           </div>
