@@ -16,7 +16,7 @@ import type { Recipe } from "@/types";
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [loading, setLoading] = useState(true);
   const hasBiometrics = useAppStore((state) => !!state.biometrics);
 
