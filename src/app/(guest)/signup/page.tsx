@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSearchParams } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -68,8 +70,14 @@ export default function SignupPage() {
         return;
       }
 
-      // Redirect to results page (user already completed onboarding)
-      router.push("/results");
+      // Redirect based on where user came from
+      if (from === "results") {
+        // User came from results page (already completed onboarding)
+        router.push("/dashboard");
+      } else {
+        // User signed up directly (needs to complete onboarding first)
+        router.push("/onboarding");
+      }
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");

@@ -18,14 +18,15 @@ export default function ResultsPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
+  const hasBiometrics = useAppStore((state) => !!state.biometrics);
 
-  // Redirect to dashboard if user is authenticated and has biometrics
+  // Redirect to dashboard if user is authenticated and has completed onboarding
   useEffect(() => {
-    if (session) {
-      // User is logged in, redirect to dashboard
+    if (session && hasBiometrics) {
+      // User is logged in and has completed onboarding, redirect to dashboard
       router.push("/dashboard");
     }
-  }, [session, router]);
+  }, [session, hasBiometrics, router]);
 
   const {
     metrics,
@@ -203,7 +204,7 @@ export default function ResultsPage() {
                 </p>
               </div>
               <Button size="lg" asChild>
-                <Link href="/signup">Create Account</Link>
+                <Link href="/signup?from=results">Create Account</Link>
               </Button>
             </div>
           </CardContent>
