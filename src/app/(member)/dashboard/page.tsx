@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   LineChart,
   Line,
@@ -10,7 +11,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Heart, TrendingUp, Activity, Utensils, LogOut } from "lucide-react";
+import Image from "next/image";
+import { TrendingUp, Activity, Utensils, LogOut } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -187,10 +189,9 @@ export default function DashboardPage() {
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Heart className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">RE FIT</span>
-            </div>
+            <Link href="/" className="flex items-center space-x-2">
+              <Image src="/logo.png" alt="RE FIT Logo" width={120} height={40} className="h-10 w-auto" />
+            </Link>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-muted-foreground text-right">
                 <p className="font-medium text-foreground">{session.user?.name || session.user?.email}</p>

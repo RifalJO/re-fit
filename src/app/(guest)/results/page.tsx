@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Heart, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RecipeGrid } from "@/components/recipes";
@@ -126,10 +127,9 @@ export default function ResultsPage() {
               </Link>
             </Button>
 
-            <div className="flex items-center space-x-2">
-              <Heart className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">RE FIT</span>
-            </div>
+            <Link href="/">
+              <Image src="/logo.png" alt="RE FIT Logo" width={120} height={40} className="h-10 w-auto" />
+            </Link>
 
             <div className="w-20" /> {/* Spacer for centering */}
           </div>
@@ -202,8 +202,9 @@ export default function ResultsPage() {
 
       {/* Footer */}
       <footer className="border-t py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Recipes sourced from Dapur Umami</p>
+        <div className="container mx-auto px-4 flex flex-col items-center space-y-4">
+          <Image src="/logo.png" alt="RE FIT Logo" width={100} height={35} className="h-8 w-auto opacity-80" />
+          <p className="text-sm text-muted-foreground">Recipes sourced from Dapur Umami</p>
         </div>
       </footer>
     </div>

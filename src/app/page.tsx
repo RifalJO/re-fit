@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Heart, Activity, Utensils } from "lucide-react";
+import { ArrowRight, Activity, Utensils } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -9,10 +10,9 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Heart className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">RE FIT</span>
-          </div>
+          <Link href="/" className="flex items-center space-x-2">
+            <Image src="/logo.png" alt="RE FIT Logo" width={120} height={40} className="h-10 w-auto" />
+          </Link>
           <nav className="hidden md:flex items-center space-x-6">
             <Link href="#features" className="text-sm text-muted-foreground hover:text-primary">
               Features
@@ -166,8 +166,9 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>&copy; 2026 RE FIT. Personalized Nutrition Platform.</p>
+        <div className="container mx-auto px-4 flex flex-col items-center space-y-4">
+          <Image src="/logo.png" alt="RE FIT Logo" width={150} height={50} className="h-12 w-auto" />
+          <p className="text-sm text-muted-foreground">&copy; 2026 RE FIT. Personalized Nutrition Platform.</p>
         </div>
       </footer>
     </div>

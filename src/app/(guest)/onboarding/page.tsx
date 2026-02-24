@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import Image from "next/image";
 import { OnboardingForm } from "@/components/onboarding";
 
 export default function OnboardingPage() {
@@ -9,8 +9,7 @@ export default function OnboardingPage() {
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <Heart className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">RE FIT</span>
+            <Image src="/logo.png" alt="RE FIT Logo" width={120} height={40} className="h-10 w-auto" />
           </Link>
         </div>
       </header>
@@ -31,8 +30,9 @@ export default function OnboardingPage() {
 
       {/* Footer */}
       <footer className="border-t py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Step 1 of your journey to better health</p>
+        <div className="container mx-auto px-4 flex flex-col items-center space-y-4">
+          <Image src="/logo.png" alt="RE FIT Logo" width={100} height={35} className="h-8 w-auto opacity-80" />
+          <p className="text-sm text-muted-foreground">Step 1 of your journey to better health</p>
         </div>
       </footer>
     </div>
