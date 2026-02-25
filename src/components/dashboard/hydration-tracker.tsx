@@ -69,7 +69,7 @@ export function HydrationTracker() {
   };
 
   return (
-    <Card className="relative overflow-hidden">
+    <Card className="relative overflow-hidden h-full min-h-[400px]">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold flex items-center justify-between">
           <span className="flex items-center gap-2">

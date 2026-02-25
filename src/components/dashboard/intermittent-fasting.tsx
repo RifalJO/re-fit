@@ -88,7 +88,7 @@ export function IntermittentFastingTracker() {
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    <Card className="relative overflow-hidden">
+    <Card className="relative overflow-hidden h-full min-h-[400px]">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold flex items-center justify-between">
           <span>⏰ Intermittent Fasting</span>
