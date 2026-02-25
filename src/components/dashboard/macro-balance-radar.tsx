@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { Target } from "lucide-react";
 import {
   RadarChart,
   PolarGrid,
@@ -123,7 +124,7 @@ export function MacroBalanceRadar() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">🎯 Macro Balance</CardTitle>
+          <CardTitle className="text-lg">Macro Balance</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground text-center py-8">
@@ -138,7 +139,8 @@ export function MacroBalanceRadar() {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
-          🎯 Macro Balance Analysis
+          <Target className="h-5 w-5" />
+          Macro Balance Analysis
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
