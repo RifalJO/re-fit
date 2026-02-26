@@ -108,13 +108,18 @@ export function calculateRecipeDistance(
   targetFat?: number
 ): number {
   // Normalize values (simplified approach)
-  const calorieDiff = Math.abs(recipe.kalori - targetCalories) / targetCalories;
+  const recipeCalories = recipe.kalori ?? recipe.calories ?? 0;
+  const recipeProtein = recipe.protein ?? 0;
+  const recipeCarbs = recipe.karbohidrat ?? recipe.carbs ?? 0;
+  const recipeFat = recipe.lemak ?? recipe.fat ?? 0;
+
+  const calorieDiff = Math.abs(recipeCalories - targetCalories) / targetCalories;
 
   // If macro targets are provided, include them in the calculation
   if (targetProtein && targetCarbs && targetFat) {
-    const proteinDiff = Math.abs(recipe.protein - targetProtein) / targetProtein;
-    const carbsDiff = Math.abs(recipe.karbohidrat - targetCarbs) / targetCarbs;
-    const fatDiff = Math.abs(recipe.lemak - targetFat) / targetFat;
+    const proteinDiff = Math.abs(recipeProtein - targetProtein) / targetProtein;
+    const carbsDiff = Math.abs(recipeCarbs - targetCarbs) / targetCarbs;
+    const fatDiff = Math.abs(recipeFat - targetFat) / targetFat;
 
     // Weighted average (calories most important)
     return calorieDiff * 0.5 + proteinDiff * 0.2 + carbsDiff * 0.2 + fatDiff * 0.1;
