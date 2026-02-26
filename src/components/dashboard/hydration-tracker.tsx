@@ -14,9 +14,13 @@ interface HydrationState {
   logs: { time: number; amount: number }[];
 }
 
-export function HydrationTracker() {
+interface HydrationTrackerProps {
+  onHydrationUpdate?: (current: number, target: number) => void;
+}
+
+export function HydrationTracker({ onHydrationUpdate }: HydrationTrackerProps) {
   const { biometrics } = useAppStore();
-  
+
   const [hydration, setHydration] = useState<HydrationState>({
     current: 0,
     target: 2000, // Default 2L
@@ -31,6 +35,25 @@ export function HydrationTracker() {
       setHydration((prev) => ({ ...prev, target }));
     }
   }, [biometrics?.weight]);
+
+  // Notify parent of hydration changes
+  useEffect(() => {
+    if (onHydrationUpdate) {
+      onHydrationUpdate(hydration.current, hydration.target);
+    }
+  }, [hydration.current, hydration.target, onHydrationUpdate]);
+
+  // Listen for quick add water events from FAB
+  useEffect(() => {
+    const handleQuickAdd = (event: CustomEvent<{ amount: number }>) => {
+      addWater(event.detail.amount);
+    };
+
+    window.addEventListener("quick-add-water", handleQuickAdd as EventListener);
+    return () => {
+      window.removeEventListener("quick-add-water", handleQuickAdd as EventListener);
+    };
+  }, []);
 
   const addWater = (amount: number) => {
     setHydration((prev) => ({
