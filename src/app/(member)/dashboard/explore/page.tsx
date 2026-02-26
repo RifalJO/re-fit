@@ -38,7 +38,7 @@ export default function ExplorePage() {
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);
   const [filters, setFilters] = useState<RecipeFilters>(
-    exploreFilters?.filters ?? DEFAULT_FILTERS
+    (exploreFilters?.filters as RecipeFilters) ?? DEFAULT_FILTERS
   );
   const [currentPage, setCurrentPage] = useState(
     exploreFilters?.page ?? 1
