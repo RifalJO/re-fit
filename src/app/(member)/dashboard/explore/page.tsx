@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RecipeFilterDrawer, RecipeFilterSidebar, type RecipeFilters } from "@/components/recipes/recipe-filter-ultimate";
 import { useAppStore } from "@/lib/store";
-import { useRouterState } from "@/contexts/router-context";
 import type { Recipe } from "@/types";
 
 const DEFAULT_FILTERS: RecipeFilters = {
@@ -32,19 +30,18 @@ const ITEMS_PER_PAGE = 24;
 
 export default function ExplorePage() {
   const router = useRouter();
-  const { exploreFilters, setExploreFilters } = useRouterState();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);
-  const [filters, setFilters] = useState<RecipeFilters>(
-    (exploreFilters?.filters as RecipeFilters) ?? DEFAULT_FILTERS
-  );
-  const [currentPage, setCurrentPage] = useState(
-    exploreFilters?.page ?? 1
-  );
+  const [filters, setFilters] = useState<RecipeFilters>(DEFAULT_FILTERS);
   const [totalPages, setTotalPages] = useState(1);
   const { favorites, addFavorite, removeFavorite } = useAppStore();
+
+  // Get current page from URL
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
 
   // Load all recipes on mount
   useEffect(() => {
@@ -56,19 +53,23 @@ export default function ExplorePage() {
     applyFilters();
   }, [filters, allRecipes]);
 
-  // Save state when filters or page change
-  useEffect(() => {
-    if (!loading) {
-      setExploreFilters({ page: currentPage, filters });
-    }
-  }, [currentPage, filters, loading]);
-
-  // Update displayed recipes when page or filtered recipes change
+  // Update displayed recipes and URL when page or filtered recipes change
   useEffect(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
     setDisplayedRecipes(filteredRecipes.slice(start, end));
     setTotalPages(Math.ceil(filteredRecipes.length / ITEMS_PER_PAGE));
+
+    // Update URL with current page and filters
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", currentPage.toString());
+    
+    // Save filters to URL
+    if (filters.search) params.set("search", filters.search);
+    if (filters.dietType.length > 0) params.set("dietType", filters.dietType.join(","));
+    if (filters.prepDifficulty.length > 0) params.set("prepDifficulty", filters.prepDifficulty.join(","));
+    
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }, [currentPage, filteredRecipes]);
 
   const loadAllRecipes = async () => {
@@ -80,8 +81,6 @@ export default function ExplorePage() {
       if (data.success) {
         setAllRecipes(data.data);
         setFilteredRecipes(data.data);
-        setDisplayedRecipes(data.data.slice(0, ITEMS_PER_PAGE));
-        setTotalPages(Math.ceil(data.data.length / ITEMS_PER_PAGE));
       }
     } catch (error) {
       console.error("Error loading recipes:", error);
@@ -158,8 +157,23 @@ export default function ExplorePage() {
     }
 
     setFilteredRecipes(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
   }, [allRecipes, filters]);
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", newPage.toString());
+    router.push(`${pathname}?${params.toString()}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleFilterChange = (newFilters: RecipeFilters) => {
+    setFilters(newFilters);
+    // Reset to page 1 when filters change
+    const params = new URLSearchParams();
+    params.set("page", "1");
+    if (newFilters.search) params.set("search", newFilters.search);
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
   const handleToggleFavorite = (recipe: Recipe) => {
     const recipeId = recipe.title ?? recipe["nama-makanan"] ?? "";
@@ -174,11 +188,6 @@ export default function ExplorePage() {
     } else {
       addFavorite(recipe);
     }
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading) {
@@ -227,14 +236,12 @@ export default function ExplorePage() {
               </div>
 
               {/* Mobile filter button */}
-              <div className="lg:hidden">
-                <RecipeFilterDrawer
-                  filters={filters}
-                  onFilterChange={setFilters}
-                  totalRecipes={allRecipes.length}
-                  filteredRecipes={filteredRecipes.length}
-                />
-              </div>
+              <RecipeFilterDrawer
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                totalRecipes={allRecipes.length}
+                filteredRecipes={filteredRecipes.length}
+              />
             </div>
           </div>
         </div>
@@ -247,7 +254,7 @@ export default function ExplorePage() {
           <div className="hidden lg:block w-80 flex-shrink-0">
             <RecipeFilterSidebar
               filters={filters}
-              onFilterChange={setFilters}
+              onFilterChange={handleFilterChange}
               totalRecipes={allRecipes.length}
               filteredRecipes={filteredRecipes.length}
             />
@@ -262,12 +269,12 @@ export default function ExplorePage() {
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-primary" />
                     <span className="font-semibold">
-                      {filteredRecipes.length} recipes found
+                      {filteredRecipes.length.toLocaleString()} recipes found
                     </span>
                   </div>
                   {displayedRecipes.length > 0 && (
                     <span className="text-sm text-muted-foreground">
-                      Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, filteredRecipes.length)} of {filteredRecipes.length}
+                      Page {currentPage} of {totalPages}
                     </span>
                   )}
                 </div>
@@ -279,7 +286,7 @@ export default function ExplorePage() {
               <>
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                   {displayedRecipes.map((recipe) => (
-                    <Link
+                    <a
                       key={recipe.id ?? recipe.title}
                       href={`/dashboard/recipes/${encodeURIComponent(recipe.title ?? recipe["nama-makanan"] ?? "")}`}
                       className="group"
@@ -294,8 +301,7 @@ export default function ExplorePage() {
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              priority={true}
-                              unoptimized={true}
+                              loading="lazy"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).style.display = 'none';
                               }}
@@ -371,7 +377,7 @@ export default function ExplorePage() {
                           </div>
                         </CardContent>
                       </Card>
-                    </Link>
+                    </a>
                   ))}
                 </div>
 
