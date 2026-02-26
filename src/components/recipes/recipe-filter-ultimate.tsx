@@ -526,20 +526,51 @@ export function RecipeFilterDrawer({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[300px] sm:w-[400px] p-0">
-        <SheetHeader className="p-4 pb-0">
-          <SheetTitle className="flex items-center justify-between">
-            <span>Filter Recipes</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </SheetTitle>
+      <SheetContent side="left" className="w-[350px] sm:w-[400px] p-0">
+        <SheetHeader className="p-4 pb-2 border-b">
+          <div className="flex items-center justify-between">
+            <SheetTitle>Filter Recipes</SheetTitle>
+            <div className="flex items-center gap-2">
+              {activeFilterCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const cleared: RecipeFilters = {
+                      dietType: [],
+                      prepDifficulty: [],
+                      estimatedCostLevel: [],
+                      suitableFor: [],
+                      category: "",
+                      search: "",
+                      calories: [0, 2000],
+                      protein: [0, 100],
+                      carbs: [0, 200],
+                      fat: [0, 100],
+                      cookingTime: [0, 180],
+                      portion: [1, 20],
+                    };
+                    onFilterChange(cleared);
+                  }}
+                  className="text-xs h-8"
+                >
+                  Clear all
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setOpen(false)}
+                className="h-8 w-8"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {filteredRecipes} of {totalRecipes} recipes
+          </p>
         </SheetHeader>
-        <Separator />
         <div className="p-4">
           <RecipeFilterPanel
             filters={filters}

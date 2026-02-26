@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Search, Filter, Utensils, TrendingUp } from "lucide-react";
+import Image from "next/image";
+import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ResponsiveRecipeFilter, type RecipeFilters } from "@/components/recipes/recipe-filter-ultimate";
-import { EnhancedRecipeCard } from "@/components/recipes/enhanced-recipe-card";
 import { useAppStore } from "@/lib/store";
 import type { Recipe } from "@/types";
 
@@ -26,11 +26,16 @@ const DEFAULT_FILTERS: RecipeFilters = {
   portion: [1, 20],
 };
 
+const ITEMS_PER_PAGE = 24;
+
 export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
+  const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);
   const [filters, setFilters] = useState<RecipeFilters>(DEFAULT_FILTERS);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { favorites, addFavorite, removeFavorite } = useAppStore();
 
   // Load all recipes on mount
@@ -43,6 +48,14 @@ export default function ExplorePage() {
     applyFilters();
   }, [filters, allRecipes]);
 
+  // Update displayed recipes when page or filtered recipes change
+  useEffect(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    setDisplayedRecipes(filteredRecipes.slice(start, end));
+    setTotalPages(Math.ceil(filteredRecipes.length / ITEMS_PER_PAGE));
+  }, [currentPage, filteredRecipes]);
+
   const loadAllRecipes = async () => {
     try {
       setLoading(true);
@@ -52,6 +65,8 @@ export default function ExplorePage() {
       if (data.success) {
         setAllRecipes(data.data);
         setFilteredRecipes(data.data);
+        setDisplayedRecipes(data.data.slice(0, ITEMS_PER_PAGE));
+        setTotalPages(Math.ceil(data.data.length / ITEMS_PER_PAGE));
       }
     } catch (error) {
       console.error("Error loading recipes:", error);
@@ -60,7 +75,7 @@ export default function ExplorePage() {
     }
   };
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...allRecipes];
 
     // Apply search filter
@@ -128,7 +143,8 @@ export default function ExplorePage() {
     }
 
     setFilteredRecipes(filtered);
-  };
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [allRecipes, filters]);
 
   const handleToggleFavorite = (recipe: Recipe) => {
     const recipeId = recipe.title ?? recipe["nama-makanan"] ?? "";
@@ -143,6 +159,11 @@ export default function ExplorePage() {
     } else {
       addFavorite(recipe);
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading) {
@@ -213,54 +234,173 @@ export default function ExplorePage() {
             <Card className="mb-6">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-5 w-5 text-primary" />
-                      <span className="font-semibold">
-                        {filteredRecipes.length} recipes found
-                      </span>
-                    </div>
-                    {(filters.dietType.length > 0 ||
-                      filters.prepDifficulty.length > 0 ||
-                      filters.estimatedCostLevel.length > 0 ||
-                      filters.suitableFor.length > 0 ||
-                      filters.calories[0] > 0 ||
-                      filters.calories[1] < 2000 ||
-                      filters.protein[0] > 0 ||
-                      filters.protein[1] < 100 ||
-                      filters.carbs[0] > 0 ||
-                      filters.carbs[1] < 200 ||
-                      filters.fat[0] > 0 ||
-                      filters.fat[1] < 100) && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setFilters(DEFAULT_FILTERS)}
-                        className="text-xs"
-                      >
-                        Clear all filters
-                      </Button>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    <span className="font-semibold">
+                      {filteredRecipes.length} recipes found
+                    </span>
                   </div>
+                  {displayedRecipes.length > 0 && (
+                    <span className="text-sm text-muted-foreground">
+                      Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, filteredRecipes.length)} of {filteredRecipes.length}
+                    </span>
+                  )}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Recipe Grid */}
-            {filteredRecipes.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {filteredRecipes.map((recipe) => (
-                  <EnhancedRecipeCard
-                    key={recipe.id ?? recipe.title}
-                    recipe={recipe}
-                    isFavorite={favorites.some(
-                      (f) => (f.title ?? f["nama-makanan"]) === (recipe.title ?? recipe["nama-makanan"])
-                    )}
-                    onToggleFavorite={handleToggleFavorite}
-                    showChart={true}
-                  />
-                ))}
-              </div>
+            {/* Recipe Grid with Images */}
+            {displayedRecipes.length > 0 ? (
+              <>
+                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                  {displayedRecipes.map((recipe) => (
+                    <Link
+                      key={recipe.id ?? recipe.title}
+                      href={`/dashboard/recipes/${encodeURIComponent(recipe.title ?? recipe["nama-makanan"] ?? "")}`}
+                      className="group"
+                    >
+                      <Card className="overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                        {/* Recipe Image */}
+                        <div className="relative aspect-video overflow-hidden bg-muted">
+                          {recipe.imageUrl ? (
+                            <Image
+                              src={recipe.imageUrl}
+                              alt={recipe.title ?? recipe["nama-makanan"] ?? "Recipe image"}
+                              fill
+                              className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              loading="lazy"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                              <Utensils className="h-12 w-12 opacity-20" />
+                            </div>
+                          )}
+                          {/* Overlay gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </div>
+
+                        {/* Recipe Info */}
+                        <CardContent className="p-4 space-y-3">
+                          <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                            {recipe.title ?? recipe["nama-makanan"]}
+                          </h3>
+
+                          {/* Badges */}
+                          <div className="flex flex-wrap gap-1">
+                            {recipe.dietType && (
+                              <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                                {recipe.dietType}
+                              </span>
+                            )}
+                            {recipe.prepDifficulty && (
+                              <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                {recipe.prepDifficulty}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Nutrition Info */}
+                          <div className="grid grid-cols-3 gap-2 text-xs">
+                            <div className="text-center p-2 rounded bg-green-50 dark:bg-green-950/20">
+                              <p className="text-muted-foreground">Protein</p>
+                              <p className="font-semibold text-green-600 dark:text-green-400">
+                                {(recipe.protein ?? 0).toFixed(0)}g
+                              </p>
+                            </div>
+                            <div className="text-center p-2 rounded bg-blue-50 dark:bg-blue-950/20">
+                              <p className="text-muted-foreground">Carbs</p>
+                              <p className="font-semibold text-blue-600 dark:text-blue-400">
+                                {(recipe.carbs ?? recipe.karbohidrat ?? 0).toFixed(0)}g
+                              </p>
+                            </div>
+                            <div className="text-center p-2 rounded bg-amber-50 dark:bg-amber-950/20">
+                              <p className="text-muted-foreground">Fat</p>
+                              <p className="font-semibold text-amber-600 dark:text-amber-400">
+                                {(recipe.fat ?? recipe.lemak ?? 0).toFixed(0)}g
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Additional Info */}
+                          <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+                            {recipe.cookingTime && (
+                              <span className="flex items-center gap-1">
+                                <span>⏱️</span> {recipe.cookingTime} min
+                              </span>
+                            )}
+                            {recipe.portion && (
+                              <span className="flex items-center gap-1">
+                                <span>🍽️</span> {recipe.portion} portions
+                              </span>
+                            )}
+                            {recipe.calories && (
+                              <span className="flex items-center gap-1">
+                                <span>🔥</span> {recipe.calories} cal
+                              </span>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-8">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      Previous
+                    </Button>
+
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+
+                        return (
+                          <Button
+                            key={pageNum}
+                            variant={currentPage === pageNum ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(pageNum)}
+                            className="w-10"
+                          >
+                            {pageNum}
+                          </Button>
+                        );
+                      })}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  </div>
+                )}
+              </>
             ) : (
               <Card>
                 <CardContent className="pt-6 text-center py-12">
@@ -269,6 +409,13 @@ export default function ExplorePage() {
                   <p className="text-muted-foreground">
                     Try adjusting your filters to see more results
                   </p>
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => setFilters(DEFAULT_FILTERS)}
+                  >
+                    Clear all filters
+                  </Button>
                 </CardContent>
               </Card>
             )}
