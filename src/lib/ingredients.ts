@@ -110,7 +110,7 @@ export function filterRecipesByIngredients(
   }
 
   return recipes.filter((recipe) => {
-    const recipeName = recipe["nama-makanan"].toLowerCase();
+    const recipeName = (recipe["nama-makanan"] ?? recipe.title ?? "").toLowerCase();
 
     // Check if recipe name contains any of the preferred ingredient keywords
     for (const category of preferredIngredients) {
