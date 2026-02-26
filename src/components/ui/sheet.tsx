@@ -137,4 +137,15 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  // Sheet aliases
+  Dialog as Sheet,
+  DialogPortal as SheetPortal,
+  DialogOverlay as SheetOverlay,
+  DialogClose as SheetClose,
+  DialogTrigger as SheetTrigger,
+  DialogContent as SheetContent,
+  DialogHeader as SheetHeader,
+  DialogFooter as SheetFooter,
+  DialogTitle as SheetTitle,
+  DialogDescription as SheetDescription,
 }
