@@ -7,7 +7,7 @@ import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight } from 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ResponsiveRecipeFilter, type RecipeFilters } from "@/components/recipes/recipe-filter-ultimate";
+import { RecipeFilterDrawer, RecipeFilterSidebar, type RecipeFilters } from "@/components/recipes/recipe-filter-ultimate";
 import { useAppStore } from "@/lib/store";
 import type { Recipe } from "@/types";
 
@@ -206,12 +206,14 @@ export default function ExplorePage() {
               </div>
 
               {/* Mobile filter button */}
-              <ResponsiveRecipeFilter
-                filters={filters}
-                onFilterChange={setFilters}
-                totalRecipes={allRecipes.length}
-                filteredRecipes={filteredRecipes.length}
-              />
+              <div className="lg:hidden">
+                <RecipeFilterDrawer
+                  filters={filters}
+                  onFilterChange={setFilters}
+                  totalRecipes={allRecipes.length}
+                  filteredRecipes={filteredRecipes.length}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -219,14 +221,16 @@ export default function ExplorePage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="flex gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Filter Sidebar */}
-          <ResponsiveRecipeFilter
-            filters={filters}
-            onFilterChange={setFilters}
-            totalRecipes={allRecipes.length}
-            filteredRecipes={filteredRecipes.length}
-          />
+          <div className="hidden lg:block w-80 flex-shrink-0">
+            <RecipeFilterSidebar
+              filters={filters}
+              onFilterChange={setFilters}
+              totalRecipes={allRecipes.length}
+              filteredRecipes={filteredRecipes.length}
+            />
+          </div>
 
           {/* Recipe Grid */}
           <div className="flex-1">
