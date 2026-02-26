@@ -17,7 +17,7 @@ interface EnhancedRecipeCardProps {
 
 // Helper to get recipe name
 const getRecipeName = (recipe: Recipe) => {
-  return recipe.title || recipe["nama-makanan"] || recipe.name || "Unknown Recipe";
+  return recipe.title || recipe["nama-makanan"] || "Unknown Recipe";
 };
 
 // Helper to get recipe link
