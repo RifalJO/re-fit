@@ -3,12 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
-import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RecipeFilterDrawer, type RecipeFilters } from "@/components/recipes/recipe-filter-ultimate";
 import { useAppStore } from "@/lib/store";
+import { cn } from "@/lib/utils";
 import type { Recipe } from "@/types";
 
 const DEFAULT_FILTERS: RecipeFilters = {
@@ -274,38 +275,62 @@ export default function ExplorePage() {
           {displayedRecipes.length > 0 ? (
             <>
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {displayedRecipes.map((recipe) => (
-                  <a
-                    key={recipe.id ?? recipe.title}
-                    href={`/dashboard/recipes/${encodeURIComponent(recipe.title ?? recipe["nama-makanan"] ?? "")}`}
-                    className="group"
-                  >
-                    <Card className="overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                      {/* Recipe Image */}
-                      <div className="relative aspect-video overflow-hidden bg-muted">
-                        {recipe.imageUrl ? (
-                          <Image
-                            src={recipe.imageUrl}
-                            alt={recipe.title ?? recipe["nama-makanan"] ?? "Recipe image"}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            loading="lazy"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                            <Utensils className="h-12 w-12 opacity-20" />
-                          </div>
-                        )}
-                        {/* Overlay gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </div>
+                {displayedRecipes.map((recipe) => {
+                  const recipeId = recipe.title ?? recipe["nama-makanan"] ?? "";
+                  const isFavorite = favorites.some(
+                    (f) => (f.title ?? f["nama-makanan"]) === recipeId
+                  );
 
-                      {/* Recipe Info */}
-                      <CardContent className="p-4 space-y-3">
+                  return (
+                    <div key={recipe.id ?? recipe.title} className="group relative">
+                      {/* Favorite Button Overlay */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleToggleFavorite(recipe);
+                        }}
+                        className="absolute top-3 right-3 z-20 h-9 w-9 rounded-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      >
+                        <Heart
+                          className={cn(
+                            "h-5 w-5 transition-all duration-300",
+                            isFavorite ? "fill-red-500 text-red-500 scale-110" : "text-gray-600 dark:text-gray-300 hover:text-red-500"
+                          )}
+                        />
+                      </button>
+
+                      <a
+                        href={`/dashboard/recipes/${encodeURIComponent(recipe.title ?? recipe["nama-makanan"] ?? "")}`}
+                        className="block"
+                      >
+                        <Card className="overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                          {/* Recipe Image */}
+                          <div className="relative aspect-video overflow-hidden bg-muted">
+                            {recipe.imageUrl ? (
+                              <Image
+                                src={recipe.imageUrl}
+                                alt={recipe.title ?? recipe["nama-makanan"] ?? "Recipe image"}
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                loading="lazy"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                <Utensils className="h-12 w-12 opacity-20" />
+                              </div>
+                            )}
+                            {/* Overlay gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          </div>
+
+                          {/* Recipe Info */}
+                          <CardContent className="p-4 space-y-3">
                         <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
                           {recipe.title ?? recipe["nama-makanan"]}
                         </h3>
@@ -367,8 +392,10 @@ export default function ExplorePage() {
                       </CardContent>
                     </Card>
                   </a>
-                ))}
-              </div>
+                </div>
+              );
+            })}
+          </div>
 
               {/* Pagination */}
               {totalPages > 1 && (
