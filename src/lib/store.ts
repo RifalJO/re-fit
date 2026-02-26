@@ -49,8 +49,9 @@ export const useAppStore = create<AppState>()(
 
       addFavorite: (recipe) => {
         const { favorites } = get();
+        const recipeName = recipe["nama-makanan"] || recipe.title || "";
         const exists = favorites.some(
-          (f) => f["nama-makanan"] === recipe["nama-makanan"]
+          (f) => (f["nama-makanan"] || f.title) === recipeName
         );
         if (!exists) {
           set({ favorites: [...favorites, recipe] });
@@ -61,7 +62,7 @@ export const useAppStore = create<AppState>()(
         const { favorites } = get();
         set({
           favorites: favorites.filter(
-            (f) => f["nama-makanan"] !== recipeName
+            (f) => (f["nama-makanan"] || f.title) !== recipeName
           ),
         });
       },
