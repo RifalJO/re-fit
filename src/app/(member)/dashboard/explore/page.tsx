@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ const DEFAULT_FILTERS: RecipeFilters = {
 const ITEMS_PER_PAGE = 24;
 
 export default function ExplorePage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
@@ -185,11 +187,9 @@ export default function ExplorePage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Button variant="ghost" size="sm" asChild className="h-8 px-2 -ml-2 text-muted-foreground hover:text-foreground">
-                  <Link href="/dashboard">
-                    <ChevronLeft className="h-4 w-4 mr-1" />
-                    Back
-                  </Link>
+                <Button variant="ghost" size="sm" onClick={() => router.back()} className="h-8 px-2 -ml-2 text-muted-foreground hover:text-foreground">
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back
                 </Button>
               </div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
