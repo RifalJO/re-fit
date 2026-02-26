@@ -34,13 +34,16 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
   };
 
   const handleToggleFavorite = async (recipeToToggle: Recipe) => {
+    const recipeId = recipeToToggle["nama-makanan"] ?? recipeToToggle.title ?? "";
+    if (!recipeId) return;
+
     const isFavorite = favorites.some(
-      (f) => f["nama-makanan"] === recipeToToggle["nama-makanan"]
+      (f) => (f["nama-makanan"] ?? f.title) === recipeId
     );
 
     if (isFavorite) {
-      removeFavorite(recipeToToggle["nama-makanan"]);
-      await fetch(`/api/user/favorites?recipeId=${recipeToToggle["nama-makanan"]}`, {
+      removeFavorite(recipeId);
+      await fetch(`/api/user/favorites?recipeId=${encodeURIComponent(recipeId)}`, {
         method: "DELETE",
       });
     } else {
@@ -49,14 +52,14 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          recipeId: recipeToToggle["nama-makanan"],
-          name: recipeToToggle["nama-makanan"],
-          kalori: recipeToToggle.kalori,
-          protein: recipeToToggle.protein,
-          karbohidrat: recipeToToggle.karbohidrat,
-          lemak: recipeToToggle.lemak,
-          serat: recipeToToggle.serat,
-          link: recipeToToggle.link,
+          recipeId,
+          name: recipeId,
+          kalori: recipeToToggle.kalori ?? recipeToToggle.calories ?? 0,
+          protein: recipeToToggle.protein ?? 0,
+          karbohidrat: recipeToToggle.karbohidrat ?? recipeToToggle.carbs ?? 0,
+          lemak: recipeToToggle.lemak ?? recipeToToggle.fat ?? 0,
+          serat: recipeToToggle.serat ?? 0,
+          link: recipeToToggle.link ?? recipeToToggle.url ?? "",
         }),
       });
     }
@@ -78,7 +81,7 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
           <RecipeCard 
             recipe={recipe} 
             showChart={false}
-            isFavorite={favorites.some((f) => f["nama-makanan"] === recipe["nama-makanan"])}
+            isFavorite={favorites.some((f) => (f["nama-makanan"] ?? f.title) === (recipe["nama-makanan"] ?? recipe.title))}
             onToggleFavorite={handleToggleFavorite}
           />
         </div>
@@ -100,7 +103,7 @@ export function SwapItRecipe({ recipe }: SwapItRecipeProps) {
                   <RecipeCard 
                     recipe={alt} 
                     showChart={false}
-                    isFavorite={favorites.some((f) => f["nama-makanan"] === alt["nama-makanan"])}
+                    isFavorite={favorites.some((f) => (f["nama-makanan"] ?? f.title) === (alt["nama-makanan"] ?? alt.title))}
                     onToggleFavorite={handleToggleFavorite}
                   />
                 </div>
@@ -142,13 +145,16 @@ export function RandomDiscoveryMenu() {
   };
 
   const handleToggleFavorite = async (recipeToToggle: Recipe) => {
+    const recipeId = recipeToToggle["nama-makanan"] ?? recipeToToggle.title ?? "";
+    if (!recipeId) return;
+
     const isFavorite = favorites.some(
-      (f) => f["nama-makanan"] === recipeToToggle["nama-makanan"]
+      (f) => (f["nama-makanan"] ?? f.title) === recipeId
     );
 
     if (isFavorite) {
-      removeFavorite(recipeToToggle["nama-makanan"]);
-      await fetch(`/api/user/favorites?recipeId=${recipeToToggle["nama-makanan"]}`, {
+      removeFavorite(recipeId);
+      await fetch(`/api/user/favorites?recipeId=${encodeURIComponent(recipeId)}`, {
         method: "DELETE",
       });
     } else {
@@ -157,14 +163,14 @@ export function RandomDiscoveryMenu() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          recipeId: recipeToToggle["nama-makanan"],
-          name: recipeToToggle["nama-makanan"],
-          kalori: recipeToToggle.kalori,
-          protein: recipeToToggle.protein,
-          karbohidrat: recipeToToggle.karbohidrat,
-          lemak: recipeToToggle.lemak,
-          serat: recipeToToggle.serat,
-          link: recipeToToggle.link,
+          recipeId,
+          name: recipeId,
+          kalori: recipeToToggle.kalori ?? recipeToToggle.calories ?? 0,
+          protein: recipeToToggle.protein ?? 0,
+          karbohidrat: recipeToToggle.karbohidrat ?? recipeToToggle.carbs ?? 0,
+          lemak: recipeToToggle.lemak ?? recipeToToggle.fat ?? 0,
+          serat: recipeToToggle.serat ?? 0,
+          link: recipeToToggle.link ?? recipeToToggle.url ?? "",
         }),
       });
     }
@@ -196,10 +202,10 @@ export function RandomDiscoveryMenu() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <RecipeCard 
-                  recipe={recipe} 
+                <RecipeCard
+                  recipe={recipe}
                   showChart={false}
-                  isFavorite={favorites.some((f) => f["nama-makanan"] === recipe["nama-makanan"])}
+                  isFavorite={favorites.some((f) => (f["nama-makanan"] ?? f.title) === (recipe["nama-makanan"] ?? recipe.title))}
                   onToggleFavorite={handleToggleFavorite}
                 />
               </motion.div>
