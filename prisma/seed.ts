@@ -36,6 +36,11 @@ async function main() {
 
   console.log(`📊 Found ${records.length} recipes to import...`);
 
+  // Clear existing recipes before seeding (optional - comment out to keep existing data)
+  console.log('🗑️  Clearing existing recipes...');
+  await prisma.recipe.deleteMany({});
+  console.log('✅ Database cleared');
+
   let successCount = 0;
   let errorCount = 0;
 

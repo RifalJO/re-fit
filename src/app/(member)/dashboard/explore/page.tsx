@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RecipeFilterDrawer, RecipeFilterSidebar, type RecipeFilters } from "@/components/recipes/recipe-filter-ultimate";
 import { useAppStore } from "@/lib/store";
+import { useRouterState } from "@/contexts/router-context";
 import type { Recipe } from "@/types";
 
 const DEFAULT_FILTERS: RecipeFilters = {
@@ -31,12 +32,17 @@ const ITEMS_PER_PAGE = 24;
 
 export default function ExplorePage() {
   const router = useRouter();
+  const { exploreFilters, setExploreFilters } = useRouterState();
   const [loading, setLoading] = useState(true);
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);
-  const [filters, setFilters] = useState<RecipeFilters>(DEFAULT_FILTERS);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState<RecipeFilters>(
+    exploreFilters?.filters ?? DEFAULT_FILTERS
+  );
+  const [currentPage, setCurrentPage] = useState(
+    exploreFilters?.page ?? 1
+  );
   const [totalPages, setTotalPages] = useState(1);
   const { favorites, addFavorite, removeFavorite } = useAppStore();
 
@@ -49,6 +55,13 @@ export default function ExplorePage() {
   useEffect(() => {
     applyFilters();
   }, [filters, allRecipes]);
+
+  // Save state when filters or page change
+  useEffect(() => {
+    if (!loading) {
+      setExploreFilters({ page: currentPage, filters });
+    }
+  }, [currentPage, filters, loading]);
 
   // Update displayed recipes when page or filtered recipes change
   useEffect(() => {
