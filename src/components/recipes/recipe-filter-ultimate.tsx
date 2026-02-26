@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Filter, X, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -468,28 +468,7 @@ export function RecipeFilterPanel({
   );
 }
 
-// Desktop Sidebar Component
-export function RecipeFilterSidebar({
-  filters,
-  onFilterChange,
-  totalRecipes,
-  filteredRecipes,
-}: RecipeFilterProps) {
-  return (
-    <Card className="sticky top-4 h-fit">
-      <CardContent className="p-4">
-        <RecipeFilterPanel
-          filters={filters}
-          onFilterChange={onFilterChange}
-          totalRecipes={totalRecipes}
-          filteredRecipes={filteredRecipes}
-        />
-      </CardContent>
-    </Card>
-  );
-}
-
-// Mobile Drawer Component
+// Main Drawer/BottomSheet Component
 export function RecipeFilterDrawer({
   filters,
   onFilterChange,
@@ -497,6 +476,21 @@ export function RecipeFilterDrawer({
   filteredRecipes,
 }: RecipeFilterProps) {
   const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check window size for responsive drawer vs bottom sheet
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIsMobile();
+
+    // Listener for resize
+    window.addEventListener("resize", checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
 
   const activeFilterCount =
     filters.dietType.length +
@@ -518,16 +512,27 @@ export function RecipeFilterDrawer({
           Filters
           {activeFilterCount > 0 && (
             <Badge
-              variant="secondary"
-              className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+              variant="default"
+              className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-primary text-primary-foreground"
             >
               {activeFilterCount}
             </Badge>
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[350px] sm:w-[400px] p-0">
-        <SheetHeader className="p-4 pb-2 border-b">
+      {/* 
+        Responsive Sheet Content: 
+        - isMobile ? side="bottom" class="h-[90vh] rounded-t-2xl" 
+        - !isMobile ? side="right" class="w-[400px]"
+      */}
+      <SheetContent
+        side={isMobile ? "bottom" : "right"}
+        className={cn(
+          "p-0 flex flex-col",
+          isMobile ? "h-[85vh] rounded-t-2xl" : "w-[350px] sm:w-[400px] h-full"
+        )}
+      >
+        <SheetHeader className="p-4 pb-2 border-b flex-shrink-0">
           <div className="flex items-center justify-between">
             <SheetTitle>Filter Recipes</SheetTitle>
             <div className="flex items-center gap-2">
@@ -561,17 +566,19 @@ export function RecipeFilterDrawer({
                 variant="ghost"
                 size="icon"
                 onClick={() => setOpen(false)}
-                className="h-8 w-8"
+                className="h-8 w-8 rounded-full"
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {filteredRecipes} of {totalRecipes} recipes
+          <p className="text-sm text-muted-foreground text-left">
+            Showing {filteredRecipes} of {totalRecipes} recipes
           </p>
         </SheetHeader>
-        <div className="p-4">
+
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto p-4 overscroll-contain">
           <RecipeFilterPanel
             filters={filters}
             onFilterChange={onFilterChange}
@@ -579,24 +586,16 @@ export function RecipeFilterDrawer({
             filteredRecipes={filteredRecipes}
           />
         </div>
+
+        {/* Mobile sticky apply button at the bottom */}
+        {isMobile && (
+          <div className="p-4 border-t bg-background flex-shrink-0">
+            <Button className="w-full" onClick={() => setOpen(false)}>
+              Apply Filters
+            </Button>
+          </div>
+        )}
       </SheetContent>
     </Sheet>
-  );
-}
-
-// Combined component that renders sidebar on desktop and drawer on mobile
-export function ResponsiveRecipeFilter(props: RecipeFilterProps) {
-  return (
-    <>
-      {/* Desktop Sidebar - hidden on mobile */}
-      <div className="hidden lg:block w-80 flex-shrink-0">
-        <RecipeFilterSidebar {...props} />
-      </div>
-
-      {/* Mobile Drawer trigger - shown in header */}
-      <div className="lg:hidden">
-        <RecipeFilterDrawer {...props} />
-      </div>
-    </>
   );
 }

@@ -7,7 +7,7 @@ import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight } from 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { RecipeFilterDrawer, RecipeFilterSidebar, type RecipeFilters } from "@/components/recipes/recipe-filter-ultimate";
+import { RecipeFilterDrawer, type RecipeFilters } from "@/components/recipes/recipe-filter-ultimate";
 import { useAppStore } from "@/lib/store";
 import type { Recipe } from "@/types";
 
@@ -63,12 +63,12 @@ export default function ExplorePage() {
     // Update URL with current page and filters
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", currentPage.toString());
-    
+
     // Save filters to URL
     if (filters.search) params.set("search", filters.search);
     if (filters.dietType.length > 0) params.set("dietType", filters.dietType.join(","));
     if (filters.prepDifficulty.length > 0) params.set("prepDifficulty", filters.prepDifficulty.join(","));
-    
+
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }, [currentPage, filteredRecipes]);
 
@@ -235,7 +235,7 @@ export default function ExplorePage() {
                 />
               </div>
 
-              {/* Mobile filter button */}
+              {/* Filter Button - Now Universal for Desktop and Mobile */}
               <RecipeFilterDrawer
                 filters={filters}
                 onFilterChange={handleFilterChange}
@@ -249,209 +249,197 @@ export default function ExplorePage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filter Sidebar */}
-          <div className="hidden lg:block w-80 flex-shrink-0">
-            <RecipeFilterSidebar
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              totalRecipes={allRecipes.length}
-              filteredRecipes={filteredRecipes.length}
-            />
-          </div>
-
-          {/* Recipe Grid */}
-          <div className="flex-1">
-            {/* Stats bar */}
-            <Card className="mb-6">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">
-                      {filteredRecipes.length.toLocaleString()} recipes found
-                    </span>
-                  </div>
-                  {displayedRecipes.length > 0 && (
-                    <span className="text-sm text-muted-foreground">
-                      Page {currentPage} of {totalPages}
-                    </span>
-                  )}
+        {/* Recipe Grid (Full Width) */}
+        <div className="w-full">
+          {/* Stats bar */}
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  <span className="font-semibold">
+                    {filteredRecipes.length.toLocaleString()} recipes found
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
+                {displayedRecipes.length > 0 && (
+                  <span className="text-sm text-muted-foreground">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Recipe Grid with Images */}
-            {displayedRecipes.length > 0 ? (
-              <>
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                  {displayedRecipes.map((recipe) => (
-                    <a
-                      key={recipe.id ?? recipe.title}
-                      href={`/dashboard/recipes/${encodeURIComponent(recipe.title ?? recipe["nama-makanan"] ?? "")}`}
-                      className="group"
-                    >
-                      <Card className="overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                        {/* Recipe Image */}
-                        <div className="relative aspect-video overflow-hidden bg-muted">
-                          {recipe.imageUrl ? (
-                            <Image
-                              src={recipe.imageUrl}
-                              alt={recipe.title ?? recipe["nama-makanan"] ?? "Recipe image"}
-                              fill
-                              className="object-cover transition-transform duration-300 group-hover:scale-105"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              loading="lazy"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = 'none';
-                              }}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                              <Utensils className="h-12 w-12 opacity-20" />
-                            </div>
+          {/* Recipe Grid with Images */}
+          {displayedRecipes.length > 0 ? (
+            <>
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {displayedRecipes.map((recipe) => (
+                  <a
+                    key={recipe.id ?? recipe.title}
+                    href={`/dashboard/recipes/${encodeURIComponent(recipe.title ?? recipe["nama-makanan"] ?? "")}`}
+                    className="group"
+                  >
+                    <Card className="overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                      {/* Recipe Image */}
+                      <div className="relative aspect-video overflow-hidden bg-muted">
+                        {recipe.imageUrl ? (
+                          <Image
+                            src={recipe.imageUrl}
+                            alt={recipe.title ?? recipe["nama-makanan"] ?? "Recipe image"}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            loading="lazy"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                            <Utensils className="h-12 w-12 opacity-20" />
+                          </div>
+                        )}
+                        {/* Overlay gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+
+                      {/* Recipe Info */}
+                      <CardContent className="p-4 space-y-3">
+                        <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                          {recipe.title ?? recipe["nama-makanan"]}
+                        </h3>
+
+                        {/* Badges */}
+                        <div className="flex flex-wrap gap-1">
+                          {recipe.dietType && (
+                            <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                              {recipe.dietType}
+                            </span>
                           )}
-                          {/* Overlay gradient */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          {recipe.prepDifficulty && (
+                            <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                              {recipe.prepDifficulty}
+                            </span>
+                          )}
                         </div>
 
-                        {/* Recipe Info */}
-                        <CardContent className="p-4 space-y-3">
-                          <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
-                            {recipe.title ?? recipe["nama-makanan"]}
-                          </h3>
-
-                          {/* Badges */}
-                          <div className="flex flex-wrap gap-1">
-                            {recipe.dietType && (
-                              <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
-                                {recipe.dietType}
-                              </span>
-                            )}
-                            {recipe.prepDifficulty && (
-                              <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                                {recipe.prepDifficulty}
-                              </span>
-                            )}
+                        {/* Nutrition Info */}
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div className="text-center p-2 rounded bg-green-50 dark:bg-green-950/20">
+                            <p className="text-muted-foreground">Protein</p>
+                            <p className="font-semibold text-green-600 dark:text-green-400">
+                              {(recipe.protein ?? 0).toFixed(0)}g
+                            </p>
                           </div>
-
-                          {/* Nutrition Info */}
-                          <div className="grid grid-cols-3 gap-2 text-xs">
-                            <div className="text-center p-2 rounded bg-green-50 dark:bg-green-950/20">
-                              <p className="text-muted-foreground">Protein</p>
-                              <p className="font-semibold text-green-600 dark:text-green-400">
-                                {(recipe.protein ?? 0).toFixed(0)}g
-                              </p>
-                            </div>
-                            <div className="text-center p-2 rounded bg-blue-50 dark:bg-blue-950/20">
-                              <p className="text-muted-foreground">Carbs</p>
-                              <p className="font-semibold text-blue-600 dark:text-blue-400">
-                                {(recipe.carbs ?? recipe.karbohidrat ?? 0).toFixed(0)}g
-                              </p>
-                            </div>
-                            <div className="text-center p-2 rounded bg-amber-50 dark:bg-amber-950/20">
-                              <p className="text-muted-foreground">Fat</p>
-                              <p className="font-semibold text-amber-600 dark:text-amber-400">
-                                {(recipe.fat ?? recipe.lemak ?? 0).toFixed(0)}g
-                              </p>
-                            </div>
+                          <div className="text-center p-2 rounded bg-blue-50 dark:bg-blue-950/20">
+                            <p className="text-muted-foreground">Carbs</p>
+                            <p className="font-semibold text-blue-600 dark:text-blue-400">
+                              {(recipe.carbs ?? recipe.karbohidrat ?? 0).toFixed(0)}g
+                            </p>
                           </div>
-
-                          {/* Additional Info */}
-                          <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-                            {recipe.cookingTime && (
-                              <span className="flex items-center gap-1">
-                                <span>⏱️</span> {recipe.cookingTime} min
-                              </span>
-                            )}
-                            {recipe.portion && (
-                              <span className="flex items-center gap-1">
-                                <span>🍽️</span> {recipe.portion} portions
-                              </span>
-                            )}
-                            {recipe.calories && (
-                              <span className="flex items-center gap-1">
-                                <span>🔥</span> {recipe.calories} cal
-                              </span>
-                            )}
+                          <div className="text-center p-2 rounded bg-amber-50 dark:bg-amber-950/20">
+                            <p className="text-muted-foreground">Fat</p>
+                            <p className="font-semibold text-amber-600 dark:text-amber-400">
+                              {(recipe.fat ?? recipe.lemak ?? 0).toFixed(0)}g
+                            </p>
                           </div>
-                        </CardContent>
-                      </Card>
-                    </a>
-                  ))}
-                </div>
+                        </div>
 
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                      Previous
-                    </Button>
+                        {/* Additional Info */}
+                        <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+                          {recipe.cookingTime && (
+                            <span className="flex items-center gap-1">
+                              <span>⏱️</span> {recipe.cookingTime} min
+                            </span>
+                          )}
+                          {recipe.portion && (
+                            <span className="flex items-center gap-1">
+                              <span>🍽️</span> {recipe.portion} portions
+                            </span>
+                          )}
+                          {recipe.calories && (
+                            <span className="flex items-center gap-1">
+                              <span>🔥</span> {recipe.calories} cal
+                            </span>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </a>
+                ))}
+              </div>
 
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        let pageNum;
-                        if (totalPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentPage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentPage >= totalPages - 2) {
-                          pageNum = totalPages - 4 + i;
-                        } else {
-                          pageNum = currentPage - 2 + i;
-                        }
-
-                        return (
-                          <Button
-                            key={pageNum}
-                            variant={currentPage === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => handlePageChange(pageNum)}
-                            className="w-10"
-                          >
-                            {pageNum}
-                          </Button>
-                        );
-                      })}
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <Card>
-                <CardContent className="pt-6 text-center py-12">
-                  <Filter className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No recipes found</h3>
-                  <p className="text-muted-foreground">
-                    Try adjusting your filters to see more results
-                  </p>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-8">
                   <Button
                     variant="outline"
-                    className="mt-4"
-                    onClick={() => setFilters(DEFAULT_FILTERS)}
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
                   >
-                    Clear all filters
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Previous
                   </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handlePageChange(pageNum)}
+                          className="w-10"
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <Card>
+              <CardContent className="pt-6 text-center py-12">
+                <Filter className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No recipes found</h3>
+                <p className="text-muted-foreground">
+                  Try adjusting your filters to see more results
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => setFilters(DEFAULT_FILTERS)}
+                >
+                  Clear all filters
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
     </div>
