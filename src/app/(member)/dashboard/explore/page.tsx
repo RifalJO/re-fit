@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
-import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import { Search, Filter, Utensils, TrendingUp, ChevronLeft, ChevronRight, Heart, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -210,9 +210,9 @@ export default function ExplorePage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Button variant="ghost" size="sm" onClick={() => router.back()} className="h-8 px-2 -ml-2 text-muted-foreground hover:text-foreground">
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Back
+                <Button variant="outline" size="sm" onClick={() => router.push("/dashboard")} className="h-8 px-2 -ml-2 text-muted-foreground hover:text-foreground">
+                  <Home className="h-4 w-4 mr-1" />
+                  Dashboard
                 </Button>
               </div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
