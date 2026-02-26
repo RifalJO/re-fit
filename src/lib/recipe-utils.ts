@@ -4,9 +4,9 @@ import type { Recipe } from "@/types";
  * Calculate Euclidean distance between two recipes based on macros
  */
 export function euclideanDistance(recipe1: Recipe, recipe2: Recipe): number {
-  const proteinDiff = recipe1.protein - recipe2.protein;
-  const carbDiff = recipe1.karbohidrat - recipe2.karbohidrat;
-  const fatDiff = recipe1.lemak - recipe2.lemak;
+  const proteinDiff = (recipe1.protein ?? 0) - (recipe2.protein ?? 0);
+  const carbDiff = ((recipe1.karbohidrat ?? recipe1.carbs ?? 0) - (recipe2.karbohidrat ?? recipe2.carbs ?? 0));
+  const fatDiff = ((recipe1.lemak ?? recipe1.fat ?? 0) - (recipe2.lemak ?? recipe2.fat ?? 0));
 
   return Math.sqrt(
     proteinDiff * proteinDiff +
@@ -24,18 +24,20 @@ export function findKNearestNeighbors(
   allRecipes: Recipe[],
   k: number = 3
 ): Recipe[] {
+  const targetName = targetRecipe["nama-makanan"] ?? targetRecipe.title ?? "";
+  
   // Calculate distances for all recipes
   const recipesWithDistance = allRecipes
-    .filter((recipe) => recipe["nama-makanan"] !== targetRecipe["nama-makanan"])
+    .filter((recipe) => (recipe["nama-makanan"] ?? recipe.title ?? "") !== targetName)
     .map((recipe) => ({
       recipe,
       distance: euclideanDistance(targetRecipe, recipe),
-      proteinDiff: Math.abs(recipe.protein - targetRecipe.protein),
+      proteinDiff: Math.abs((recipe.protein ?? 0) - (targetRecipe.protein ?? 0)),
     }));
 
   // Filter recipes with similar protein (within 20%)
   const similarProtein = recipesWithDistance.filter(
-    (r) => r.proteinDiff <= targetRecipe.protein * 0.2
+    (r) => r.proteinDiff <= (targetRecipe.protein ?? 0) * 0.2
   );
 
   // Sort by distance and take top K
@@ -124,16 +126,17 @@ export function generateGroceryList(recipes: Recipe[]): Record<string, string[]>
   const ingredientMap: Record<string, string[]> = {};
 
   recipes.forEach((recipe) => {
-    const ingredients = extractIngredients(recipe["nama-makanan"]);
-    
+    const recipeName = recipe["nama-makanan"] ?? recipe.title ?? "";
+    const ingredients = extractIngredients(recipeName);
+
     ingredients.forEach((ingredient) => {
       // Categorize ingredients
       const category = categorizeIngredient(ingredient);
-      
+
       if (!ingredientMap[category]) {
         ingredientMap[category] = [];
       }
-      
+
       if (!ingredientMap[category].includes(ingredient)) {
         ingredientMap[category].push(ingredient);
       }
