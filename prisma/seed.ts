@@ -1,7 +1,7 @@
 /**
  * RE FIT Database Seed Script
- * Imports recipes from recipes_data_preprocessed.csv (1,159 recipes) into PostgreSQL
- * Dataset: Dapur Umami Indonesian Recipe Collection
+ * Imports recipes from recipes_data_unique_images.csv into PostgreSQL
+ * Dataset: Dapur Umami Indonesian Recipe Collection (deduplicated)
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -15,13 +15,13 @@ async function main() {
   console.log('🌱 Starting database seed...');
 
   // Read the CSV file - look in project root
-  const csvPath = path.join(__dirname, '..', 'recipes_data_preprocessed.csv');
+  const csvPath = path.join(__dirname, '..', 'recipes_data_unique_images.csv');
 
   console.log(`📂 Loading recipes from: ${csvPath}`);
 
   if (!fs.existsSync(csvPath)) {
     console.error(`❌ CSV file not found: ${csvPath}`);
-    console.log('Please ensure recipes_data_preprocessed.csv is in the re-fit project root.');
+    console.log('Please ensure recipes_data_unique_images.csv is in the re-fit project root.');
     return;
   }
 
