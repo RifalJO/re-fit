@@ -134,7 +134,7 @@ export function calculateRecipeDistance(
   recipe: Recipe,
   targetCalories: number
 ): number {
-  const recipeCalories = recipe.kalori;
+  const recipeCalories = recipe.kalori ?? recipe.calories ?? 0;
   const calorieDifference = Math.abs(recipeCalories - targetCalories);
 
   // Normalize and calculate distance (simplified version)
@@ -151,7 +151,7 @@ export function filterRecipesByAllergies(
   if (!allergies || allergies.length === 0) return recipes;
 
   return recipes.filter((recipe) => {
-    const recipeName = recipe["nama-makanan"].toLowerCase();
+    const recipeName = (recipe["nama-makanan"] ?? recipe.title ?? "").toLowerCase();
 
     for (const allergy of allergies) {
       const keywords = allergyMap[allergy] || [];
