@@ -37,7 +37,7 @@ export function MacroBalanceRadar() {
         carbohydrates: (acc.carbohydrates ?? 0) + (recipe.carbs ?? 0),
         fat: (acc.fat ?? 0) + (recipe.fat ?? 0),
       }),
-      { protein: 0, carbohydrates: 0, fat: 0 }
+      { protein: 0, carbohydrates: 0, fat: 0 } as { protein: number; carbohydrates: number; fat: number }
     );
 
     return {
