@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RecipeGrid } from "@/components/recipes";
+import { ResponsiveRecipeFilter, type RecipeFilters } from "@/components/recipes/recipe-filter-panel";
 import { useAppStore, filterRecipesByAllergies, getRecommendedRecipes } from "@/lib/store";
 import { loadRecipes, loadAllergyMap } from "@/lib/data";
 import { filterRecipesByIngredients } from "@/lib/ingredients";
@@ -15,6 +16,17 @@ import type { Recipe } from "@/types";
 export default function ResultsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
+
+  const [filters, setFilters] = useState<RecipeFilters>({
+    dietType: [],
+    prepDifficulty: [],
+    estimatedCostLevel: [],
+    suitableFor: [],
+    maxCookingTime: 120,
+    search: "",
+  });
 
   const {
     metrics,
@@ -34,6 +46,8 @@ export default function ResultsPage() {
           loadRecipes(),
           loadAllergyMap(),
         ]);
+
+        setAllRecipes(recipes);
 
         // If no recommendations yet, calculate them
         if (recommendations.length === 0 && metrics) {
@@ -63,12 +77,14 @@ export default function ResultsPage() {
           );
 
           setRecommendations(recommended);
+          setFilteredRecipes(recommended);
 
           // Save recommendations to database if user is authenticated
           await saveRecommendationsToDb(recommended);
         } else if (recommendations.length > 0) {
           // If recommendations already exist, still save them to DB
           await saveRecommendationsToDb(recommendations);
+          setFilteredRecipes(recommendations);
         }
 
         setLoading(false);
@@ -81,6 +97,60 @@ export default function ResultsPage() {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metrics, healthConstraints, recommendations.length, setRecommendations, foodPreferences?.preferredIngredients]);
+
+  // Apply filters to recipes
+  useEffect(() => {
+    if (allRecipes.length === 0) return;
+
+    let filtered = [...recommendations];
+
+    // Apply diet type filter
+    if (filters.dietType.length > 0) {
+      filtered = filtered.filter((recipe) =>
+        filters.dietType.includes(recipe.dietType ?? "")
+      );
+    }
+
+    // Apply prep difficulty filter
+    if (filters.prepDifficulty.length > 0) {
+      filtered = filtered.filter((recipe) =>
+        filters.prepDifficulty.includes(recipe.prepDifficulty ?? "")
+      );
+    }
+
+    // Apply cost level filter
+    if (filters.estimatedCostLevel.length > 0) {
+      filtered = filtered.filter((recipe) =>
+        filters.estimatedCostLevel.includes(recipe.estimatedCostLevel ?? "")
+      );
+    }
+
+    // Apply meal type filter
+    if (filters.suitableFor.length > 0) {
+      filtered = filtered.filter((recipe) =>
+        filters.suitableFor.includes(recipe.suitableFor ?? "")
+      );
+    }
+
+    // Apply cooking time filter
+    if (filters.maxCookingTime < 120) {
+      filtered = filtered.filter(
+        (recipe) => (recipe.cookingTime ?? 120) <= filters.maxCookingTime
+      );
+    }
+
+    // Apply search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (recipe) =>
+          recipe.title?.toLowerCase().includes(searchLower) ||
+          recipe.ingredients?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    setFilteredRecipes(filtered);
+  }, [filters, recommendations, allRecipes]);
 
   async function saveRecommendationsToDb(recipes: Recipe[]) {
     if (saving) return; // Prevent duplicate saves
@@ -204,22 +274,46 @@ export default function ResultsPage() {
           </CardContent>
         </Card>
 
-        {/* Recommendations */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">Recommended For You</h2>
-              <p className="text-muted-foreground">
-                {recommendations.length} recipes tailored to your nutritional needs
-              </p>
-            </div>
-          </div>
-
-          <RecipeGrid
-            recipes={recommendations}
-            favorites={favorites}
-            onToggleFavorite={handleToggleFavorite}
+        {/* Recommendations with Filter */}
+        <div className="flex gap-8">
+          {/* Filter Sidebar */}
+          <ResponsiveRecipeFilter
+            filters={filters}
+            onFilterChange={setFilters}
+            totalRecipes={recommendations.length}
+            filteredRecipes={filteredRecipes.length}
           />
+
+          {/* Recipe Grid */}
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-bold">Recommended For You</h2>
+                <p className="text-muted-foreground">
+                  {filteredRecipes.length} of {recommendations.length} recipes
+                  {filters.dietType.length > 0 || filters.prepDifficulty.length > 0 || filters.estimatedCostLevel.length > 0 || filters.suitableFor.length > 0
+                    ? ` (filtered)`
+                    : ""}
+                </p>
+              </div>
+            </div>
+
+            <RecipeGrid
+              recipes={filteredRecipes}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+            />
+
+            {filteredRecipes.length === 0 && (
+              <Card>
+                <CardContent className="pt-6 text-center py-12">
+                  <p className="text-muted-foreground">
+                    No recipes match your filters. Try adjusting your criteria.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
 
         {/* CTA for Account Creation */}

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\kinga\\OneDrive\\Dokumen\\Gunadarma\\Semester 8\\Skripsi\\Pengembangan PI\\re-fit"
+      ]
+    },
+    "github": {
+      "type": "sse",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}

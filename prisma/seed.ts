@@ -1,6 +1,7 @@
 /**
- * Umami-Chef Database Seed Script
- * Imports recipes from recipes_data_app_ready.csv into PostgreSQL
+ * RE FIT Database Seed Script
+ * Imports recipes from recipes_data_preprocessed.csv (1,159 recipes) into PostgreSQL
+ * Dataset: Dapur Umami Indonesian Recipe Collection
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -14,18 +15,18 @@ async function main() {
   console.log('🌱 Starting database seed...');
 
   // Read the CSV file - look in project root
-  const csvPath = path.join(__dirname, '..', 'recipes_data_app_ready.csv');
+  const csvPath = path.join(__dirname, '..', 'recipes_data_preprocessed.csv');
 
   console.log(`📂 Loading recipes from: ${csvPath}`);
 
   if (!fs.existsSync(csvPath)) {
     console.error(`❌ CSV file not found: ${csvPath}`);
-    console.log('Please ensure recipes_data_app_ready.csv is in the re-fit project root.');
+    console.log('Please ensure recipes_data_preprocessed.csv is in the re-fit project root.');
     return;
   }
 
   const csvData = fs.readFileSync(csvPath, 'utf-8');
-  
+
   // Parse CSV
   const records: Record<string, any>[] = parse(csvData, {
     columns: true,
@@ -92,7 +93,7 @@ async function main() {
       });
 
       successCount++;
-      
+
       // Log progress every 100 recipes
       if (successCount % 100 === 0) {
         console.log(`   ✅ Imported ${successCount} recipes...`);
