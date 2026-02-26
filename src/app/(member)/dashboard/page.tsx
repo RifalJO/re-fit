@@ -180,13 +180,16 @@ export default function DashboardPage() {
   }
 
   const handleToggleFavorite = async (recipe: Recipe) => {
+    const recipeName = recipe["nama-makanan"] || recipe.title || "";
+    if (!recipeName) return;
+    
     const isFavorite = favorites.some(
-      (f) => f["nama-makanan"] === recipe["nama-makanan"]
+      (f) => (f["nama-makanan"] || f.title) === recipeName
     );
 
     if (isFavorite) {
-      removeFavorite(recipe["nama-makanan"]);
-      await fetch(`/api/user/favorites?recipeId=${recipe["nama-makanan"]}`, {
+      removeFavorite(recipeName);
+      await fetch(`/api/user/favorites?recipeId=${recipeName}`, {
         method: "DELETE",
       });
     } else {
@@ -195,27 +198,30 @@ export default function DashboardPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          recipeId: recipe["nama-makanan"],
-          name: recipe["nama-makanan"],
-          kalori: recipe.kalori,
-          protein: recipe.protein,
-          karbohidrat: recipe.karbohidrat,
-          lemak: recipe.lemak,
-          serat: recipe.serat,
-          link: recipe.link,
+          recipeId: recipeName,
+          name: recipeName,
+          kalori: recipe.kalori || recipe.calories || 0,
+          protein: recipe.protein || 0,
+          karbohidrat: recipe.karbohidrat || recipe.carbs || 0,
+          lemak: recipe.lemak || recipe.fat || 0,
+          serat: recipe.serat || 0,
+          link: recipe.link || recipe.url || "",
         }),
       });
     }
   };
 
   const handleToggleRecommendationFavorite = async (recipe: Recipe) => {
+    const recipeName = recipe["nama-makanan"] || recipe.title || "";
+    if (!recipeName) return;
+    
     const isFavorite = favorites.some(
-      (f) => f["nama-makanan"] === recipe["nama-makanan"]
+      (f) => (f["nama-makanan"] || f.title) === recipeName
     );
 
     if (isFavorite) {
-      removeFavorite(recipe["nama-makanan"]);
-      await fetch(`/api/user/favorites?recipeId=${recipe["nama-makanan"]}`, {
+      removeFavorite(recipeName);
+      await fetch(`/api/user/favorites?recipeId=${recipeName}`, {
         method: "DELETE",
       });
     } else {
@@ -224,14 +230,14 @@ export default function DashboardPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          recipeId: recipe["nama-makanan"],
-          name: recipe["nama-makanan"],
-          kalori: recipe.kalori,
-          protein: recipe.protein,
-          karbohidrat: recipe.karbohidrat,
-          lemak: recipe.lemak,
-          serat: recipe.serat,
-          link: recipe.link,
+          recipeId: recipeName,
+          name: recipeName,
+          kalori: recipe.kalori || recipe.calories || 0,
+          protein: recipe.protein || 0,
+          karbohidrat: recipe.karbohidrat || recipe.carbs || 0,
+          lemak: recipe.lemak || recipe.fat || 0,
+          serat: recipe.serat || 0,
+          link: recipe.link || recipe.url || "",
         }),
       });
     }

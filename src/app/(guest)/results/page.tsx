@@ -118,12 +118,15 @@ export default function ResultsPage() {
   }
 
   const handleToggleFavorite = (recipe: Recipe) => {
+    const recipeName = recipe["nama-makanan"] || recipe.title || "";
+    if (!recipeName) return;
+    
     const isFavorite = favorites.some(
-      (f) => f["nama-makanan"] === recipe["nama-makanan"]
+      (f) => f["nama-makanan"] === recipeName || f.title === recipeName
     );
 
     if (isFavorite) {
-      removeFavorite(recipe["nama-makanan"]);
+      removeFavorite(recipeName);
     } else {
       addFavorite(recipe);
     }
