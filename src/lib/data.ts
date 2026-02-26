@@ -85,7 +85,7 @@ export function filterRecipesByAllergies(
   if (!allergies || allergies.length === 0) return recipes;
 
   return recipes.filter((recipe) => {
-    const recipeName = recipe["nama-makanan"].toLowerCase();
+    const recipeName = (recipe["nama-makanan"] ?? recipe.title ?? "").toLowerCase();
 
     for (const allergy of allergies) {
       const keywords = allergyMap[allergy as keyof AllergyMap] || [];
