@@ -1,4 +1,5 @@
-export interface Recipe {
+// Legacy Recipe type (for backward compatibility)
+export interface LegacyRecipe {
   "nama-makanan": string;
   kalori: number;
   protein: number;
@@ -7,6 +8,57 @@ export interface Recipe {
   serat: number;
   link: string;
 }
+
+// New Recipe type with feature engineering fields
+export interface Recipe {
+  id?: string;
+  title?: string;
+  "nama-makanan"?: string;
+  url?: string;
+  category?: string | null;
+  cookingTime?: number | null;
+  portion?: number | null;
+  ingredients?: string;
+  steps?: string;
+  calories?: number | null;
+  protein?: number | null;
+  carbs?: number | null;
+  karbohidrat?: number | null;
+  fat?: number | null;
+  lemak?: number | null;
+  serat?: number;
+  imageUrl?: string;
+  dietType?: DietType | null;
+  prepDifficulty?: PrepDifficulty | null;
+  estimatedCostLevel?: CostLevel | null;
+  suitableFor?: MealType | null;
+  link?: string;
+  kalori?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export type DietType = 
+  | 'Keto-Friendly'
+  | 'High-Protein'
+  | 'Low-Calories'
+  | 'Regular'
+  | 'Uncategorized';
+
+export type PrepDifficulty = 
+  | 'Easy'
+  | 'Medium'
+  | 'Hard';
+
+export type CostLevel = 
+  | '$'
+  | '$$'
+  | '$$$';
+
+export type MealType = 
+  | 'Breakfast'
+  | 'Main Course'
+  | 'Snack';
 
 export type AllergyType = "telur" | "susu" | "kacang" | "udang" | "ikan" | "gluten";
 

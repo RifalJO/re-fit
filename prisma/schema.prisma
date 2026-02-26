@@ -101,9 +101,10 @@ model Favorite {
   serat     Float
   link      String
   createdAt DateTime @default(now())
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [title], onDelete: Cascade)
+
   @@unique([userId, recipeId])
 }
 
@@ -134,8 +135,43 @@ model Recommendation {
   link      String
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [title], onDelete: Cascade)
 
   @@unique([userId, recipeId])
   @@index([userId])
+}
+
+// RE FIT: Master recipe catalog from Dapur Umami
+model Recipe {
+  id                 String   @id @default(cuid())
+  title              String   @unique // nama masakan (unique identifier)
+  url                String   // URL original resep
+  category           String?  // kategori masakan
+  cookingTime        Int?     // waktu masak dalam menit
+  portion            Int?     // jumlah porsi
+  ingredients        String   // bahan-bahan (text)
+  steps              String   // langkah-langkah (text)
+  calories           Float?   // kalori (Kkal)
+  protein            Float?   // protein (gram)
+  carbs              Float?   // karbohidrat (gram)
+  fat                Float?   // lemak (gram)
+  imageUrl           String   // URL thumbnail
+  dietType           String?  // diet_type: Keto-Friendly, High-Protein, Low-Calories, Regular, Uncategorized
+  prepDifficulty     String?  // prep_difficulty: Easy, Medium, Hard
+  estimatedCostLevel String?  // estimated_cost_level: $, $$, $$$
+  suitableFor        String?  // suitable_for: Breakfast, Main Course, Snack
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  favorites          Favorite[]
+  recommendations    Recommendation[]
+
+  @@index([dietType])
+  @@index([prepDifficulty])
+  @@index([estimatedCostLevel])
+  @@index([suitableFor])
+  @@index([category])
+  @@index([calories])
 }
