@@ -268,6 +268,12 @@ export default function DashboardPage() {
               <Image src="/logo.png" alt="RE FIT Logo" width={200} height={70} className="h-16 w-auto object-contain" />
             </Link>
             <div className="flex items-center space-x-4">
+              <Button variant="outline" size="sm" asChild className="hidden md:inline-flex">
+                <Link href="/dashboard/explore">
+                  <Utensils className="h-4 w-4 mr-2" />
+                  Explore All Recipes
+                </Link>
+              </Button>
               <div className="text-sm text-muted-foreground text-right">
                 <p className="font-medium text-foreground">{session.user?.name || session.user?.email}</p>
                 <p className="text-xs">{session.user?.email}</p>
