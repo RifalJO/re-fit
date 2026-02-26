@@ -173,7 +173,7 @@ export default function ExplorePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-          <p className="text-muted-foreground">Loading 1,159 recipes...</p>
+          <p className="text-muted-foreground">Loading recipes...</p>
         </div>
       </div>
     );
@@ -197,7 +197,7 @@ export default function ExplorePage() {
                 Global Menu Explorer
               </h1>
               <p className="text-sm text-muted-foreground">
-                Explore all {allRecipes.length} recipes from Dapur Umami
+                Explore all {allRecipes.length.toLocaleString()} recipes from Dapur Umami
               </p>
             </div>
 
