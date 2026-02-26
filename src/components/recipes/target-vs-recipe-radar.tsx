@@ -151,9 +151,9 @@ export function TargetVsRecipeRadar({ recipe, dailyTarget }: TargetVsRecipeRadar
             />
             <Legend />
             <Tooltip
-              formatter={(value, name, props) => {
+              formatter={(value, name, props: any) => {
                 if (name === "This Recipe") {
-                  const percentage = data[props?.index ?? 0]?.percentage.toFixed(1);
+                  const percentage = data[props?.payload?.index ?? 0]?.percentage.toFixed(1);
                   return [`${value} (${percentage}% of target)`, "Amount"];
                 }
                 return [`${value}`, "Amount"];
