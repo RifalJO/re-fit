@@ -32,13 +32,13 @@ export default function RecipeDetailPage() {
     try {
       const response = await fetch(`/api/recipes?search=${encodeURIComponent(recipeTitle)}`);
       const data = await response.json();
-      
+
       if (data.success && data.data.length > 0) {
         // Find exact match or closest match
         const foundRecipe = data.data.find(
-          (r: Recipe) => r.title.toLowerCase() === recipeTitle.toLowerCase()
+          (r: Recipe) => (r.title ?? r["nama-makanan"] ?? "").toLowerCase() === recipeTitle.toLowerCase()
         ) || data.data[0];
-        
+
         setRecipe(foundRecipe);
       }
     } catch (error) {
