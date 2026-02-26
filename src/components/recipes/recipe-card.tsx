@@ -25,7 +25,7 @@ export function RecipeCard({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <h3 className="font-semibold text-lg line-clamp-2 flex-1 pr-2 transition-colors duration-300 group-hover:text-primary">
-            {recipe["nama-makanan"]}
+            {recipe["nama-makanan"] ?? recipe.title ?? "Unknown Recipe"}
           </h3>
           {onToggleFavorite && (
             <Button
@@ -51,7 +51,7 @@ export function RecipeCard({
       <CardContent className="space-y-4">
         {/* Calories badge */}
         <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-all duration-300 group-hover:bg-primary/20">
-          {recipe.kalori.toFixed(0)} calories
+          {(recipe.kalori ?? recipe.calories ?? 0).toFixed(0)} calories
         </div>
 
         {/* Macro grid */}
@@ -59,19 +59,19 @@ export function RecipeCard({
           <div className="rounded-lg bg-green-50 p-2 dark:bg-green-950/20 transition-all duration-300 hover:scale-105 hover:shadow-md">
             <p className="text-xs text-muted-foreground">Protein</p>
             <p className="text-sm font-semibold text-green-600 dark:text-green-400">
-              {recipe.protein.toFixed(1)}g
+              {(recipe.protein ?? 0).toFixed(1)}g
             </p>
           </div>
           <div className="rounded-lg bg-blue-50 p-2 dark:bg-blue-950/20 transition-all duration-300 hover:scale-105 hover:shadow-md">
             <p className="text-xs text-muted-foreground">Carbs</p>
             <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-              {recipe.karbohidrat.toFixed(1)}g
+              {(recipe.karbohidrat ?? recipe.carbs ?? 0).toFixed(1)}g
             </p>
           </div>
           <div className="rounded-lg bg-amber-50 p-2 dark:bg-amber-950/20 transition-all duration-300 hover:scale-105 hover:shadow-md">
             <p className="text-xs text-muted-foreground">Fat</p>
             <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
-              {recipe.lemak.toFixed(1)}g
+              {(recipe.lemak ?? recipe.fat ?? 0).toFixed(1)}g
             </p>
           </div>
         </div>
@@ -79,16 +79,16 @@ export function RecipeCard({
         {/* Fiber info */}
         <div className="flex items-center justify-between text-sm transition-all duration-300">
           <span className="text-muted-foreground">Fiber</span>
-          <span className="font-medium">{recipe.serat.toFixed(1)}g</span>
+          <span className="font-medium">{(recipe.serat ?? 0).toFixed(1)}g</span>
         </div>
 
         {/* Macro chart */}
         {showChart && (
           <div className="h-[100px] w-full animate-fade-in">
             <MacroChart
-              protein={recipe.protein}
-              carbohydrates={recipe.karbohidrat}
-              fat={recipe.lemak}
+              protein={recipe.protein ?? 0}
+              carbohydrates={recipe.karbohidrat ?? recipe.carbs ?? 0}
+              fat={recipe.lemak ?? recipe.fat ?? 0}
               size="sm"
               showLabels={false}
             />
@@ -98,7 +98,7 @@ export function RecipeCard({
 
       <CardFooter>
         <a
-          href={recipe.link}
+          href={recipe.link ?? recipe.url ?? "#"}
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm text-primary hover:underline w-full text-center block transition-all duration-300 hover:scale-105"
