@@ -62,7 +62,7 @@ export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  
+
   const {
     biometrics,
     metrics,
@@ -95,7 +95,7 @@ export default function DashboardPage() {
       // Load biometrics
       const bioRes = await fetch("/api/user/biometrics");
       const bioData = await bioRes.json();
-      
+
       if (bioData.biometrics) {
         const dbBio = bioData.biometrics as DbBiometrics;
         const localBio = {
@@ -182,7 +182,7 @@ export default function DashboardPage() {
   const handleToggleFavorite = async (recipe: Recipe) => {
     const recipeName = recipe["nama-makanan"] || recipe.title || "";
     if (!recipeName) return;
-    
+
     const isFavorite = favorites.some(
       (f) => (f["nama-makanan"] || f.title) === recipeName
     );
@@ -214,7 +214,7 @@ export default function DashboardPage() {
   const handleToggleRecommendationFavorite = async (recipe: Recipe) => {
     const recipeName = recipe["nama-makanan"] || recipe.title || "";
     if (!recipeName) return;
-    
+
     const isFavorite = favorites.some(
       (f) => (f["nama-makanan"] || f.title) === recipeName
     );
@@ -268,8 +268,8 @@ export default function DashboardPage() {
               <Image src="/logo.png" alt="RE FIT Logo" width={200} height={70} className="h-16 w-auto object-contain" />
             </Link>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" asChild className="hidden md:inline-flex">
-                <Link href="/dashboard/explore">
+              <Button variant="outline" size="sm" asChild className="hidden md:flex">
+                <Link href="/dashboard/explore" className="flex items-center">
                   <Utensils className="h-4 w-4 mr-2" />
                   Explore All Recipes
                 </Link>
@@ -296,6 +296,15 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-8 space-y-8">
+        <div className="md:hidden flex animate-fade-in">
+          <Button asChild className="w-full flex items-center justify-center shadow-md">
+            <Link href="/dashboard/explore">
+              <Utensils className="h-4 w-4 mr-2" />
+              Explore All Recipes
+            </Link>
+          </Button>
+        </div>
+
         {/* Metrics Overview */}
         {metrics && (
           <div className="grid gap-4 md:grid-cols-3 animate-fade-in">

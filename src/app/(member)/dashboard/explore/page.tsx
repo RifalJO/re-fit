@@ -184,6 +184,14 @@ export default function ExplorePage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Button variant="ghost" size="sm" asChild className="h-8 px-2 -ml-2 text-muted-foreground hover:text-foreground">
+                  <Link href="/dashboard">
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Back
+                  </Link>
+                </Button>
+              </div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <Utensils className="h-6 w-6" />
                 Global Menu Explorer
@@ -273,7 +281,8 @@ export default function ExplorePage() {
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              loading="lazy"
+                              priority={true}
+                              unoptimized={true}
                               onError={(e) => {
                                 (e.target as HTMLImageElement).style.display = 'none';
                               }}
